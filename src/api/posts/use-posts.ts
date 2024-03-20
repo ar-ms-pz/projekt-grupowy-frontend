@@ -1,9 +1,14 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { QueryKeys } from '../query-keys';
-import { API_URL, DEFAULT_LIMIT } from '../../config';
+import { DEFAULT_LIMIT } from '../../config';
 import { Endpoints } from '../endpoints';
 import { PaginatedResponse } from '../models/response';
 import { Post } from '../models/post';
+import { callApi } from '../callApi';
+import {
+    fetchErrorResponse,
+    unknownErrorResponse,
+} from '../erorrs/error-responses';
 
 interface Params {
     offset?: number;
@@ -18,17 +23,25 @@ export const usePosts = ({
 }: Params) => {
     return useSuspenseQuery<PaginatedResponse<Post>>({
         queryKey: [QueryKeys.POSTS, offset, limit, userId],
-        queryFn: async () => {
-            const url = new URL(`${API_URL}${Endpoints.POSTS}`);
+        queryFn: async ({ signal }) => {
+            try {
+                const response = await callApi(Endpoints.POSTS, {
+                    signal,
+                    params: {
+                        offset: offset.toString(),
+                        limit: limit.toString(),
+                        userId: userId?.toString(),
+                    },
+                });
 
-            url.searchParams.append('offset', offset.toString());
-            url.searchParams.append('limit', limit.toString());
+                return response.json();
+            } catch (error) {
+                if (error instanceof Error) {
+                    return fetchErrorResponse(error.message);
+                }
 
-            userId && url.searchParams.append('userId', userId.toString());
-
-            const response = await fetch(url);
-
-            return response.json();
+                return unknownErrorResponse;
+            }
         },
     });
 };

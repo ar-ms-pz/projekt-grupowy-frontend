@@ -1,37 +1,53 @@
-import { Link } from '@tanstack/react-router';
 import { usePosts } from '../../api/posts/use-posts';
 import { getImageUrl } from '../../utils/getImageUrl';
+import { Post } from '../post/post';
 
-export const PostList = () => {
-    const { data: posts, isError } = usePosts({
+interface Props {
+    userId?: number;
+}
+
+export const PostList = ({ userId }: Props) => {
+    const { data: response } = usePosts({
         offset: 0,
+        userId,
     });
 
-    if (isError) {
-        return <div>Error loading posts</div>;
+    if (response.errors) {
+        return (
+            <div>
+                {response.errors.map((error) => (
+                    <p key={error.code}>{error.message}</p>
+                ))}
+            </div>
+        );
     }
 
     return (
         <ul>
-            {posts.data.map((post) => (
-                <li key={post.id}>
-                    <img
-                        src={getImageUrl(post.image)}
-                        alt={post.description ?? 'Post image'}
-                    />
-                    <h3>{post.description}</h3>
-                    <p>
-                        <Link
-                            to={`/posts/$postId`}
-                            params={{
-                                postId: post.id.toString(),
-                            }}
-                        >
-                            View
-                        </Link>
-                    </p>
-                </li>
-            ))}
+            {response.data.map(
+                ({
+                    image,
+                    description,
+                    id,
+                    createdAt,
+                    isLiked,
+                    likes,
+                    author,
+                }) => (
+                    <li key={id}>
+                        <Post
+                            id={id}
+                            imageSrc={getImageUrl(image)}
+                            description={description}
+                            likes={likes}
+                            isLiked={isLiked}
+                            authorName={author.name}
+                            authorId={author.id}
+                            createdAt={createdAt}
+                        />
+                    </li>
+                ),
+            )}
         </ul>
     );
 };
