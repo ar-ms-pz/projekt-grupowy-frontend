@@ -1,0 +1,10 @@
+.sidebar {
+    padding: 3rem;
+    height: calc(100vh - 3.75rem);
+}
+
+.list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+}

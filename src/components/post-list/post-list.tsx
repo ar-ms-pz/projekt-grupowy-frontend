@@ -1,30 +1,16 @@
-import { usePosts } from '../../api/posts/use-posts';
+import { Post } from '../../api/models/post';
 import { getImageUrl } from '../../utils/getImageUrl';
-import { Post } from '../post/post';
+import { PostListItem } from './item/post-list-item';
+import $ from './post-list.module.scss';
 
 interface Props {
-    userId?: number;
+    posts: Post[];
 }
 
-export const PostList = ({ userId }: Props) => {
-    const { data: response } = usePosts({
-        offset: 0,
-        userId,
-    });
-
-    if (response.errors) {
-        return (
-            <div>
-                {response.errors.map((error) => (
-                    <p key={error.code}>{error.message}</p>
-                ))}
-            </div>
-        );
-    }
-
+export const PostList = ({ posts }: Props) => {
     return (
-        <ul>
-            {response.data.map(
+        <ul className={$.list}>
+            {posts.map(
                 ({
                     image,
                     description,
@@ -34,18 +20,17 @@ export const PostList = ({ userId }: Props) => {
                     likes,
                     author,
                 }) => (
-                    <li key={id}>
-                        <Post
-                            id={id}
-                            imageSrc={getImageUrl(image)}
-                            description={description}
-                            likes={likes}
-                            isLiked={isLiked}
-                            authorName={author.name}
-                            authorId={author.id}
-                            createdAt={createdAt}
-                        />
-                    </li>
+                    <PostListItem
+                        key={id}
+                        id={id}
+                        imageSrc={getImageUrl(image)}
+                        description={description}
+                        likes={likes}
+                        isLiked={isLiked}
+                        authorName={author.name}
+                        authorId={author.id}
+                        createdAt={createdAt}
+                    />
                 ),
             )}
         </ul>

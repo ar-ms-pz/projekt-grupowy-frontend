@@ -11,7 +11,7 @@ interface Props {
     createdAt: string;
 }
 
-export const Post = ({
+export const PostListItem = ({
     imageSrc,
     id,
     description,
