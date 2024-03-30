@@ -8,7 +8,7 @@ interface Props {
     className?: string;
     type?: 'button' | 'submit' | 'reset';
     asChild?: boolean;
-    variant?: 'primary' | 'secondary';
+    variant?: 'primary' | 'secondary' | 'ghost';
 }
 
 export const Button = ({
@@ -22,13 +22,18 @@ export const Button = ({
 }: Props) => {
     const Comp = asChild ? 'span' : 'button';
 
-    const variantClass = variant === 'secondary' ? $.secondary : $.primary;
-
     return (
         <Comp
             onClick={onClick}
             disabled={disabled}
-            className={cn($.button, variantClass, className)}
+            className={cn(
+                $.button,
+                variant === 'primary' && $.primary,
+                variant === 'secondary' && $.secondary,
+                variant === 'ghost' && $.ghost,
+
+                className,
+            )}
             type={type}
         >
             {children}

@@ -15,7 +15,7 @@ export const WallLayout = ({ children, heading }: Props) => {
             </div>
             <div className={$.content}>
                 <main className={$.main}>
-                    <h1>{heading}</h1>
+                    <h1 className={$.heading}>{heading}</h1>
                     {children}
                 </main>
             </div>

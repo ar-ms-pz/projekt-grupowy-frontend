@@ -15,4 +15,7 @@ export const STRINGS = {
     DELETE: 'Delete',
 
     MY_POSTS: 'My posts',
+
+    LIKED_BY_SINGLE: 'Liked by {{likes}} person',
+    LIKED_BY_MANY: 'Liked by {{likes}} people',
 };
