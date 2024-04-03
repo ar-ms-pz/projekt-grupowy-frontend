@@ -1,7 +1,7 @@
 import { HomeIcon } from '@radix-ui/react-icons';
 import { SidebarItem } from './item/sidebar-item';
 import $ from './sidebar.module.scss';
-import { useRouter } from '@tanstack/react-router';
+import { useRouterState } from '@tanstack/react-router';
 
 const ITEMS = [
     {
@@ -12,7 +12,7 @@ const ITEMS = [
 ];
 
 export const Sidebar = () => {
-    const { basepath } = useRouter();
+    const location = useRouterState({ select: (s) => s.location });
 
     return (
         <aside className={$.sidebar}>
@@ -24,7 +24,7 @@ export const Sidebar = () => {
                             text={text}
                             icon={icon}
                             link={link}
-                            isActive={basepath === link}
+                            isActive={location.pathname === link}
                         />
                     ))}
                 </ul>

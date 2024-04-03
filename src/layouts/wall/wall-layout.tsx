@@ -3,21 +3,17 @@ import { Sidebar } from '../../components/sidebar/sidebar';
 import $ from './wall-layout.module.scss';
 
 interface Props {
-    heading: string;
     children: ReactNode;
 }
 
-export const WallLayout = ({ children, heading }: Props) => {
+export const WallLayout = ({ children }: Props) => {
     return (
         <div className={$.layout}>
             <div className={$.sidebar}>
                 <Sidebar />
             </div>
             <div className={$.content}>
-                <main className={$.main}>
-                    <h1 className={$.heading}>{heading}</h1>
-                    {children}
-                </main>
+                <main className={$.main}>{children}</main>
             </div>
             <div className={$.placeholder} />
         </div>

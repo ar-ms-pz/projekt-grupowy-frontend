@@ -1,16 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense } from 'react';
-import { SingleUser } from '../../components/single-user.tsx/single-user';
-
-const UserPage = () => {
-    const { userId } = Route.useParams();
-
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <SingleUser id={userId} />
-        </Suspense>
-    );
-};
+import { UserPage } from '../../pages/user/user';
 
 export const Route = createFileRoute('/users/$userId')({
     component: UserPage,

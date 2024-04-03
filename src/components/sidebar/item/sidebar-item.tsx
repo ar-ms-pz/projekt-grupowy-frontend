@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Button } from '../../button/button';
 import { Link } from '@tanstack/react-router';
 import $ from './sidebar-item.module.scss';
-import { cn } from '../../../utlis/join-class-names';
+import { cn } from '../../../utils/join-class-names';
 
 interface Props {
     text: string;

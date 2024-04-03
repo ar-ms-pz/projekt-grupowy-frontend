@@ -27,7 +27,7 @@ export const usePosts = ({
             try {
                 const response = await callApi(Endpoints.POSTS, {
                     signal,
-                    params: {
+                    query: {
                         offset: offset.toString(),
                         limit: limit.toString(),
                         userId: userId?.toString(),

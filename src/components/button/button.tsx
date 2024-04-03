@@ -1,4 +1,5 @@
-import { cn } from '../../utlis/join-class-names';
+import { forwardRef } from 'react';
+import { cn } from '../../utils/join-class-names';
 import $ from './button.module.scss';
 
 interface Props {
@@ -9,34 +10,46 @@ interface Props {
     type?: 'button' | 'submit' | 'reset';
     asChild?: boolean;
     variant?: 'primary' | 'secondary' | 'ghost';
+    iconOnly?: boolean;
 }
 
-export const Button = ({
-    onClick,
-    children,
-    className,
-    type,
-    disabled,
-    asChild,
-    variant = 'primary',
-}: Props) => {
-    const Comp = asChild ? 'span' : 'button';
+const Button = forwardRef<HTMLButtonElement, Props>(
+    (
+        {
+            onClick,
+            children,
+            className,
+            type,
+            disabled,
+            asChild,
+            variant = 'primary',
+            iconOnly,
+        },
+        ref,
+    ) => {
+        const Comp = asChild ? 'span' : 'button';
 
-    return (
-        <Comp
-            onClick={onClick}
-            disabled={disabled}
-            className={cn(
-                $.button,
-                variant === 'primary' && $.primary,
-                variant === 'secondary' && $.secondary,
-                variant === 'ghost' && $.ghost,
+        return (
+            <Comp
+                ref={ref}
+                onClick={onClick}
+                disabled={disabled}
+                className={cn(
+                    $.button,
+                    variant === 'primary' && $.primary,
+                    variant === 'secondary' && $.secondary,
+                    variant === 'ghost' && $.ghost,
+                    iconOnly && $.iconOnly,
+                    className,
+                )}
+                type={type}
+            >
+                {children}
+            </Comp>
+        );
+    },
+);
 
-                className,
-            )}
-            type={type}
-        >
-            {children}
-        </Comp>
-    );
-};
+Button.displayName = 'Button';
+
+export { Button };

@@ -10,16 +10,16 @@ import { callApi } from '../callApi';
 import { User } from '../models/user';
 
 interface Params {
-    id: number;
+    userId: number;
 }
 
-export const useUser = ({ id }: Params) => {
+export const useUser = ({ userId }: Params) => {
     return useSuspenseQuery<Response<User>>({
-        queryKey: [QueryKeys.POSTS, id],
+        queryKey: [QueryKeys.USERS, userId],
         queryFn: async ({ signal }) => {
             try {
                 const response = await callApi(Endpoints.USER, {
-                    params: { id: id.toString() },
+                    params: { id: userId.toString() },
                     signal,
                 });
 

@@ -1,3 +1,4 @@
 export const QueryKeys = {
-  POSTS: "posts",
+    POSTS: 'posts',
+    USERS: 'users',
 };
