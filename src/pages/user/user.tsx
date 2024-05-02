@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import { WallLayout } from '../../layouts/wall/wall-layout';
-import { UserPostsConnector } from './posts/posts-connector';
+import { UserPostsConnector } from './connectors/posts-connector';
 import { useParams } from '@tanstack/react-router';
-import { UserHeadingConnector } from './posts/heading-connector';
+import { UserHeadingConnector } from './connectors/heading-connector';
 
 export const UserPage = () => {
     const { userId } = useParams({

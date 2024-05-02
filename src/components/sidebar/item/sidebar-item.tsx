@@ -14,7 +14,11 @@ interface Props {
 export const SidebarItem = ({ text, icon, link, isActive }: Props) => (
     <li className={$.item}>
         <Link to={link} disabled={isActive}>
-            <Button asChild className={cn($.button, isActive && $.isActive)}>
+            <Button
+                asChild
+                disabled={isActive}
+                className={cn($.button, isActive && $.isActive)}
+            >
                 {icon}
                 {text}
             </Button>

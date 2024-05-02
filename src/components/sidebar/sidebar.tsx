@@ -1,4 +1,4 @@
-import { HomeIcon } from '@radix-ui/react-icons';
+import { Home } from 'lucide-react';
 import { SidebarItem } from './item/sidebar-item';
 import $ from './sidebar.module.scss';
 import { useRouterState } from '@tanstack/react-router';
@@ -6,7 +6,7 @@ import { useRouterState } from '@tanstack/react-router';
 const ITEMS = [
     {
         text: 'Home',
-        icon: <HomeIcon />,
+        icon: <Home />,
         link: '/',
     },
 ];

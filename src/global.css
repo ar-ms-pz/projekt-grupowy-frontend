@@ -18,8 +18,9 @@ body {
 :root {
     --font-family: 'Inter', sans-serif;
 
+    --color-white: #ffffff;
     --color-background: #000000;
-    --color-text: #ffffff;
+    --color-text: var(--color-white);
     --color-text-dark: #0f172a;
 
     --color-primary: #f1f5f9;
@@ -31,6 +32,12 @@ body {
     --color-zinc-800: #27272a;
     --color-zinc-700: #3f3f46;
     --color-slate: #e2e8f0;
+    --color-blue: #3b82f6;
+    --color-dark-blue: #2563eb;
+
+    --color-error: #dc2626;
+    --color-success: #16a34a;
+    --color-info: #2563eb;
 
     --color-accent: #262626;
 

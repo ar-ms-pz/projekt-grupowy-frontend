@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { cn } from '../../utils/join-class-names';
 import $ from './button.module.scss';
+import { Loader2 } from 'lucide-react';
 
 interface Props {
     children: React.ReactNode;
@@ -11,6 +12,7 @@ interface Props {
     asChild?: boolean;
     variant?: 'primary' | 'secondary' | 'ghost';
     iconOnly?: boolean;
+    isLoading?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, Props>(
@@ -24,15 +26,38 @@ const Button = forwardRef<HTMLButtonElement, Props>(
             asChild,
             variant = 'primary',
             iconOnly,
+            isLoading,
         },
         ref,
     ) => {
         const Comp = asChild ? 'span' : 'button';
 
+        if (isLoading) {
+            return (
+                <Comp
+                    ref={ref}
+                    className={cn(
+                        $.button,
+                        variant === 'primary' && $.primary,
+                        variant === 'secondary' && $.secondary,
+                        variant === 'ghost' && $.ghost,
+                        iconOnly && $.iconOnly,
+                        disabled && $.disabled,
+                        className,
+                    )}
+                    type={type}
+                    disabled
+                >
+                    <Loader2 size={16} className={$.loader} />
+                    {children}
+                </Comp>
+            );
+        }
+
         return (
             <Comp
                 ref={ref}
-                onClick={onClick}
+                onClick={!disabled ? onClick : undefined}
                 disabled={disabled}
                 className={cn(
                     $.button,
@@ -40,6 +65,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
                     variant === 'secondary' && $.secondary,
                     variant === 'ghost' && $.ghost,
                     iconOnly && $.iconOnly,
+                    disabled && $.disabled,
                     className,
                 )}
                 type={type}

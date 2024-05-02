@@ -1,18 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense } from 'react';
-import { SinglePost } from '../../components/single-post/single-post';
-
-const PostPage = () => {
-    const { postId } = Route.useParams();
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <SinglePost id={postId} />
-        </Suspense>
-    );
-};
+import { SinglePostPage } from '../../pages/single-post/single-post';
 
 export const Route = createFileRoute('/posts/$postId')({
-    component: PostPage,
+    component: SinglePostPage,
     parseParams: (params) => ({
         postId: Number(params.postId),
     }),

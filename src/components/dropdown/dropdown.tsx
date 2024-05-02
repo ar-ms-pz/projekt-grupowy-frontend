@@ -1,8 +1,20 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import $ from './dropdown.module.scss';
 import { Button } from '../button/button';
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
-import { cn } from '../../utils/join-class-names';
+import {
+    autoUpdate,
+    flip,
+    offset,
+    shift,
+    useClick,
+    useDismiss,
+    useFloating,
+    useFocus,
+    useInteractions,
+    useRole,
+} from '@floating-ui/react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Ellipsis } from 'lucide-react';
 
 export type DropdownItem = {
     id: string;
@@ -13,63 +25,70 @@ export type DropdownItem = {
 
 type Props = {
     items: DropdownItem[];
+    className?: string;
 };
 
-export const Dropdown = ({ items }: Props) => {
+export const Dropdown = ({ items, className }: Props) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [extendUp, setExtendUp] = useState(false);
 
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    // const dropdownWrapperRef = useRef<HTMLDivElement>(null);
+    const { refs, context, x, y, strategy, placement } =
+        useFloating<HTMLUListElement>({
+            placement: 'bottom-end',
+            whileElementsMounted: autoUpdate,
+            open: isOpen,
+            onOpenChange: setIsOpen,
+            middleware: [offset(4), flip(), shift({ padding: 8 })],
+        });
 
-    useEffect(() => {
-        const button = buttonRef.current;
-
-        if (!button) return;
-
-        const handleScroll = () => {
-            const { bottom, height } = button.getBoundingClientRect();
-
-            const windowHeight = window.innerHeight;
-
-            setExtendUp(bottom > windowHeight - height - 40);
-        };
-
-        handleScroll();
-        document.addEventListener('scroll', handleScroll);
-
-        return () => {
-            document.removeEventListener('scroll', handleScroll);
-        };
-    }, [buttonRef]);
+    const { getReferenceProps, getFloatingProps } = useInteractions([
+        useClick(context),
+        useDismiss(context),
+        useFocus(context),
+        useRole(context, { role: 'menu' }),
+    ]);
 
     return (
-        <div className={$.dropdownWrapper}>
+        <>
             <Button
                 variant="ghost"
-                className={$.button}
-                onClick={() => setIsOpen((prev) => !prev)}
+                className={className}
                 iconOnly
-                ref={buttonRef}
+                ref={refs.setReference}
+                {...getReferenceProps()}
             >
-                <DotsHorizontalIcon />
+                <Ellipsis size="20" />
             </Button>
-
-            {isOpen && (
-                <ul className={cn($.dropdown, extendUp && $.dropdownUp)}>
-                    {items.map((item) => (
-                        <li key={item.id} className={$.dropdownListItem}>
-                            <button
-                                onClick={item.onClick}
-                                className={$.dropdownItem}
-                            >
-                                {item.text}
-                                {item.icon}
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.ul
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ ease: 'easeOut', duration: 0.25 }}
+                        data-placement={placement}
+                        style={{
+                            position: strategy,
+                            top: y ?? 0,
+                            left: x ?? 0,
+                        }}
+                        className={$.dropdown}
+                        ref={refs.setFloating}
+                        {...getFloatingProps()}
+                    >
+                        {items.map((item) => (
+                            <li key={item.id} className={$.dropdownListItem}>
+                                <button
+                                    onClick={item.onClick}
+                                    className={$.dropdownItem}
+                                >
+                                    {item.text}
+                                    {item.icon}
+                                </button>
+                            </li>
+                        ))}
+                    </motion.ul>
+                )}
+            </AnimatePresence>
+        </>
     );
 };

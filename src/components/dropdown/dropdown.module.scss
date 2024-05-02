@@ -1,22 +1,5 @@
-.dropdownWrapper {
-    position: relative;
-}
-
-.button {
-    display: flex;
-    align-items: center;
-}
-
 .dropdown {
-    position: absolute;
     list-style: none;
-    top: 100%;
-    right: 0;
-
-    &Up {
-        top: auto;
-        bottom: 100%;
-    }
 
     width: 12rem;
     background-color: var(--color-zinc-800);

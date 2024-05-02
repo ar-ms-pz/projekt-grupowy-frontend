@@ -6,11 +6,9 @@ import { capitalize } from '../../../utils/capitalize';
 import { Button } from '../../button/button';
 import { StringWithParams } from '../../string/string';
 import { STRINGS } from '../../../strings';
-import { HeartFilledIcon } from '../../icons/heart-fillted';
-import { HeartIcon } from '../../icons/heart';
 import { RelativeDate } from '../../relative-date/relative-date';
 import { Dropdown } from '../../dropdown/dropdown';
-import { Pencil1Icon, TrashIcon } from '@radix-ui/react-icons';
+import { Heart, Pencil, Trash2 } from 'lucide-react';
 
 const isLoggedIn = false;
 
@@ -29,7 +27,7 @@ const items = [
     {
         id: 'edit',
         text: 'Edit',
-        icon: <Pencil1Icon />,
+        icon: <Pencil />,
         onClick: () => {
             console.log('Edit');
         },
@@ -37,7 +35,7 @@ const items = [
     {
         id: 'delete',
         text: 'Delete',
-        icon: <TrashIcon />,
+        icon: <Trash2 />,
         onClick: () => {
             console.log('Delete');
         },
@@ -86,11 +84,8 @@ export const PostListItem = ({
         <div className={$.bottomWrapper}>
             {/* TODO: Auth */}
             <Button variant="ghost" className={$.button} disabled={!isLoggedIn}>
-                {isLiked ? (
-                    <HeartFilledIcon height={24} width={24} />
-                ) : (
-                    <HeartIcon height={24} width={24} />
-                )}
+                <Heart size="20" fill={isLiked ? '#fff' : undefined} />
+
                 <StringWithParams
                     value={
                         likes === 1

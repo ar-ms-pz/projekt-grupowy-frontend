@@ -1,12 +1,16 @@
 .button {
-    display: inline-block;
+    display: flex;
     padding: 0.5rem 1rem;
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-sm);
     border: none;
 
+    align-items: center;
+    gap: 0.25rem;
+
     font-size: 1rem;
     font-weight: 500;
+    font-family: var(--font-family);
 
     cursor: pointer;
 
@@ -14,11 +18,11 @@
         background-color: var(--color-primary);
         color: var(--color-text-dark);
 
-        &:hover {
+        &:hover:not(.disabled) {
             background-color: var(--color-primary--hover);
         }
 
-        &:active {
+        &:active:not(.disabled) {
             background-color: var(--color-primary--active);
         }
     }
@@ -29,13 +33,13 @@
         border: 1px solid var(--color-primary);
         padding: 0.4375rem 0.9375rem;
 
-        &:hover {
+        &:hover:not(.disabled) {
             background-color: var(--color-primary--hover);
             border: 1px solid var(--color-primary--hover);
             color: var(--color-text-dark);
         }
 
-        &:active {
+        &:active:not(.disabled) {
             background-color: var(--color-primary--active);
             border: 1px solid var(--color-primary--active);
             color: var(--color-text-dark);
@@ -47,32 +51,37 @@
         color: var(--color-text);
         box-shadow: none;
 
-        &:hover {
+        &:hover:not(.disabled) {
             background-color: rgba(255, 255, 255, 0.1);
         }
 
-        &:active {
+        &:active:not(.disabled) {
             background-color: rgba(255, 255, 255, 0.2);
         }
     }
 
-    &:disabled {
+    &.disabled {
         cursor: not-allowed;
-
-        &:hover {
-            background-color: inherit;
-        }
-
-        &:active {
-            background-color: inherit;
-        }
+        opacity: 0.7;
     }
 
     &.iconOnly {
         padding: 0.5rem;
+        display: flex;
+        align-items: center;
 
         &.secondary {
             padding: 0.4375rem;
+        }
+    }
+}
+
+.loader {
+    animation: spin 0.75s linear infinite;
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
         }
     }
 }
