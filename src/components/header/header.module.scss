@@ -9,9 +9,9 @@
 
     height: 3.75rem;
 
-    padding: 0 1rem;
+    padding: 0 0 0 1rem;
 
-    z-index: 1;
+    z-index: 10;
 }
 
 .headerText {
@@ -23,16 +23,10 @@
     display: flex;
     align-items: center;
     flex-direction: row;
+    gap: 0.5rem;
 }
 
 .logo {
-    height: 100%;
+    height: calc(100% - 1rem);
     width: auto;
-}
-
-.buttons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1rem;
 }

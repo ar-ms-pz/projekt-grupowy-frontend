@@ -13,6 +13,7 @@ interface Props {
     variant?: 'primary' | 'secondary' | 'ghost';
     iconOnly?: boolean;
     isLoading?: boolean;
+    ariaExpanded?: boolean;
 }
 
 const Button = forwardRef<HTMLButtonElement, Props>(
@@ -21,12 +22,13 @@ const Button = forwardRef<HTMLButtonElement, Props>(
             onClick,
             children,
             className,
-            type,
+            type = 'button',
             disabled,
             asChild,
             variant = 'primary',
             iconOnly,
             isLoading,
+            ariaExpanded,
         },
         ref,
     ) => {
@@ -47,6 +49,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
                     )}
                     type={type}
                     disabled
+                    aria-expanded={ariaExpanded}
                 >
                     <Loader2 size={16} className={$.loader} />
                     {children}
@@ -59,6 +62,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
                 ref={ref}
                 onClick={!disabled ? onClick : undefined}
                 disabled={disabled}
+                aria-expanded={ariaExpanded}
                 className={cn(
                     $.button,
                     variant === 'primary' && $.primary,

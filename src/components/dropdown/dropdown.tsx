@@ -21,14 +21,24 @@ export type DropdownItem = {
     text: string;
     icon: ReactNode;
     onClick: () => void;
+    disabled?: boolean;
 };
 
 type Props = {
     items: DropdownItem[];
     className?: string;
+    children?: ReactNode;
+    offsetPadding?: number;
+    shiftPadding?: number;
 };
 
-export const Dropdown = ({ items, className }: Props) => {
+export const Dropdown = ({
+    items,
+    className,
+    children,
+    offsetPadding = 4,
+    shiftPadding = 8,
+}: Props) => {
     const [isOpen, setIsOpen] = useState(false);
 
     const { refs, context, x, y, strategy, placement } =
@@ -37,7 +47,11 @@ export const Dropdown = ({ items, className }: Props) => {
             whileElementsMounted: autoUpdate,
             open: isOpen,
             onOpenChange: setIsOpen,
-            middleware: [offset(4), flip(), shift({ padding: 8 })],
+            middleware: [
+                offset(offsetPadding),
+                flip(),
+                shift({ padding: shiftPadding }),
+            ],
         });
 
     const { getReferenceProps, getFloatingProps } = useInteractions([
@@ -55,8 +69,9 @@ export const Dropdown = ({ items, className }: Props) => {
                 iconOnly
                 ref={refs.setReference}
                 {...getReferenceProps()}
+                ariaExpanded={isOpen}
             >
-                <Ellipsis size="20" />
+                {children ?? <Ellipsis size="20" />}
             </Button>
             <AnimatePresence>
                 {isOpen && (
@@ -79,6 +94,7 @@ export const Dropdown = ({ items, className }: Props) => {
                             <li key={item.id} className={$.dropdownListItem}>
                                 <button
                                     onClick={item.onClick}
+                                    disabled={item.disabled}
                                     className={$.dropdownItem}
                                 >
                                     {item.text}

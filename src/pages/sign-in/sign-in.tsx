@@ -1,20 +1,22 @@
 import { Button } from '../../components/button/button';
 import $ from './sign-in.module.scss';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { TextInput } from '../../components/text-input/text-input';
-import { useSignIn } from '../../api/auth/use-sign-in';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import { InlineNotification } from '../../components/inline-notification/inline-notification';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../hooks/use-auth';
+import { useUserContext } from '../../context/user-context';
+import { FetchError } from '../../api/fetch-error';
+import { getErrorText } from '../../helpers/get-error-text';
 
 const STRINGS = {
     DONT_HAVE_AN_ACCOUNT: "Don't have an account?",
     SIGN_IN: 'Sign in',
-    INVALID_CREDENTIALS: 'Invalid username or password',
-    SERVER_ERROR: 'An unknown error occurred. Please try again later',
+    INTERNAL_SERVER_ERROR: 'An unknown error occurred. Please try again later',
     USERNAME: 'Username',
     PASSWORD: 'Password',
 };
@@ -46,7 +48,10 @@ type FormModel = z.infer<typeof formSchema>;
 
 export const SignInPage = () => {
     const [error, setError] = useState<string | null>(null);
-    const { mutateAsync, isPending } = useSignIn();
+    const [isPending, setIsPending] = useState(false);
+    const navigate = useNavigate();
+    const { signIn } = useAuth();
+    const user = useUserContext();
 
     const {
         handleSubmit,
@@ -56,22 +61,25 @@ export const SignInPage = () => {
         resolver: zodResolver(formSchema),
     });
 
-    const onSubmit = async (data: FormModel) => {
+    useEffect(() => {
+        if (user) {
+            navigate({
+                to: '/',
+            });
+        }
+    }, [navigate, user]);
+
+    const onSubmit = async ({ username, password }: FormModel) => {
+        setIsPending(true);
+
         try {
-            const result = await mutateAsync(data);
-
-            if (!result.errors) return setError(null);
-
-            const isInvalidCredentials = result.errors.some(
-                (error) => error.code === 'invalid_credentials',
-            );
-
-            if (isInvalidCredentials)
-                return setError(STRINGS.INVALID_CREDENTIALS);
-
-            setError(STRINGS.SERVER_ERROR);
+            await signIn(username, password);
         } catch (e) {
-            setError(STRINGS.SERVER_ERROR);
+            if (e instanceof FetchError)
+                setError(getErrorText(e.errors[0]?.code));
+            else setError(STRINGS.INTERNAL_SERVER_ERROR);
+        } finally {
+            setIsPending(false);
         }
     };
 

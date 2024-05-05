@@ -18,6 +18,7 @@ export const SidebarItem = ({ text, icon, link, isActive }: Props) => (
                 asChild
                 disabled={isActive}
                 className={cn($.button, isActive && $.isActive)}
+                variant="ghost"
             >
                 {icon}
                 {text}

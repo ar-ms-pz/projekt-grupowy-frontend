@@ -1,6 +1,7 @@
 .layout {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     width: 100%;
     max-width: 100%;
     min-height: calc(100vh - 3.75rem);
@@ -8,17 +9,21 @@
 
 .sidebar {
     flex-basis: 25%;
-    flex-grow: 1;
 }
 
 .placeholder {
     flex-basis: 25%;
-    flex-grow: 1;
 }
 
 .main {
     background-color: var(--color-zinc);
     padding: 1rem 1.5rem;
     box-shadow: var(--shadow-light);
+    min-height: calc(100vh - 3.75rem);
     overflow: visible;
+}
+
+.content {
+    flex-grow: 1;
+    max-width: 54rem;
 }

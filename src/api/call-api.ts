@@ -1,5 +1,7 @@
 import { API_URL } from '../config';
 import type { Endpoint } from './endpoints';
+import { ErrorCodes } from './error-codes';
+import { FetchError } from './fetch-error';
 
 interface RequestOptions {
     body?: {
@@ -13,7 +15,7 @@ interface RequestOptions {
         [key: string]: string | undefined;
     };
     query?: {
-        [key: string]: string | string[];
+        [key: string]: string | string[] | undefined;
     };
     signal?: AbortSignal;
     token?: string;
@@ -73,11 +75,34 @@ export const callApi = async (
             queryString && queryString !== '?' ? queryString : ''
         }`,
     );
+    try {
+        const response = await fetch(url, {
+            body: body ? JSON.stringify(body) : undefined,
+            headers: reqHeaders,
+            credentials: 'include',
+            signal,
+            method,
+        });
 
-    return await fetch(url, {
-        body: body ? JSON.stringify(body) : undefined,
-        headers: reqHeaders,
-        signal,
-        method,
-    });
+        const json = await response.json();
+        if (!response.ok) {
+            throw new FetchError(
+                response.statusText,
+                response.status,
+                json.errors,
+            );
+        }
+
+        return json;
+    } catch (e) {
+        if (e instanceof FetchError) throw e;
+
+        throw new FetchError('Network error', 0, [
+            {
+                message: e instanceof Error ? e.message : 'Fetch Error',
+                code: ErrorCodes.FETCH_ERROR,
+                path: [],
+            },
+        ]);
+    }
 };

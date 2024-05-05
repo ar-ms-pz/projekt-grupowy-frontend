@@ -4,11 +4,8 @@ import { DEFAULT_LIMIT } from '../../config';
 import { Endpoints } from '../endpoints';
 import { PaginatedResponse } from '../models/response';
 import { Post } from '../models/post';
-import { callApi } from '../callApi';
-import {
-    fetchErrorResponse,
-    unknownErrorResponse,
-} from '../erorrs/error-responses';
+import { callApi } from '../call-api';
+import { FetchError } from '../fetch-error';
 
 interface Params {
     offset?: number;
@@ -21,27 +18,17 @@ export const usePosts = ({
     limit = DEFAULT_LIMIT,
     userId,
 }: Params) => {
-    return useSuspenseQuery<PaginatedResponse<Post>>({
+    return useSuspenseQuery<PaginatedResponse<Post>, FetchError>({
         queryKey: [QueryKeys.POSTS, offset, limit, userId],
         queryFn: async ({ signal }) => {
-            try {
-                const response = await callApi(Endpoints.POSTS, {
-                    signal,
-                    query: {
-                        offset: offset.toString(),
-                        limit: limit.toString(),
-                        userId: userId?.toString(),
-                    },
-                });
-
-                return response.json();
-            } catch (error) {
-                if (error instanceof Error) {
-                    return fetchErrorResponse(error.message);
-                }
-
-                return unknownErrorResponse;
-            }
+            return callApi(Endpoints.POSTS, {
+                signal,
+                query: {
+                    offset: offset.toString(),
+                    limit: limit.toString(),
+                    userId: userId?.toString(),
+                },
+            });
         },
     });
 };

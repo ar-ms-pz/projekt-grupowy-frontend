@@ -1,19 +1,22 @@
 import { Button } from '../../components/button/button';
 import $ from './sign-up.module.scss';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { TextInput } from '../../components/text-input/text-input';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import { InlineNotification } from '../../components/inline-notification/inline-notification';
-import { useState } from 'react';
-import { useSignUp } from '../../api/auth/use-sign-up';
+import { useEffect, useState } from 'react';
+import { ErrorCodes } from '../../api/error-codes';
+import { useAuth } from '../../hooks/use-auth';
+import { useUserContext } from '../../context/user-context';
+import { FetchError } from '../../api/fetch-error';
+import { getErrorText } from '../../helpers/get-error-text';
 
 const STRINGS = {
     ALREADY_HAVE_ACCOUNT: 'Already have an account?',
     SIGN_UP: 'Sign up',
-    USERNAME_TAKEN: 'Username is already taken',
     SERVER_ERROR: 'An unknown error occurred. Please try again later',
     USERNAME: 'Username',
     PASSWORD: 'Password',
@@ -64,7 +67,10 @@ type FormModel = z.infer<typeof formSchema>;
 
 export const SignUpPage = () => {
     const [error, setError] = useState<string | null>(null);
-    const { mutateAsync, isPending } = useSignUp();
+    const [isPending, setIsPending] = useState(false);
+    const { signUp } = useAuth();
+    const navigate = useNavigate();
+    const user = useUserContext();
 
     const {
         handleSubmit,
@@ -74,18 +80,25 @@ export const SignUpPage = () => {
         resolver: zodResolver(formSchema),
     });
 
-    const onSubmit = async (data: FormModel) => {
-        try {
-            const result = await mutateAsync(data);
-            if (!result.errors) return setError(null);
+    useEffect(() => {
+        if (user) {
+            navigate({
+                to: '/',
+            });
+        }
+    }, [navigate, user]);
 
-            const isUsernameTaken = result.errors.some(
-                (error) => error.code === 'username_taken',
-            );
-            if (isUsernameTaken) return setError(STRINGS.USERNAME_TAKEN);
-            setError(STRINGS.SERVER_ERROR);
+    const onSubmit = async ({ username, password }: FormModel) => {
+        setIsPending(true);
+
+        try {
+            await signUp(username, password);
         } catch (e) {
-            setError(STRINGS.SERVER_ERROR);
+            if (e instanceof FetchError)
+                setError(getErrorText(e.errors[0]?.code));
+            else setError(ErrorCodes.INTERNAL_SERVER_ERROR);
+        } finally {
+            setIsPending(false);
         }
     };
 

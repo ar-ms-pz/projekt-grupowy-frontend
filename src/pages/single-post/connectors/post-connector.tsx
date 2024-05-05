@@ -11,16 +11,6 @@ export const SinglePostConnector = ({ id }: Props) => {
         id,
     });
 
-    if (data.errors) {
-        return (
-            <div>
-                {data.errors.map((error) => (
-                    <p key={error.code}>{error.message}</p>
-                ))}
-            </div>
-        );
-    }
-
     const { image, author, createdAt, description, isLiked } = data.data;
 
     return (

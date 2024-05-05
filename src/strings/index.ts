@@ -4,8 +4,6 @@ export const STRINGS = {
 
     HOME: 'Home',
     NEWEST_POSTS: 'Newest posts',
-    SIGN_IN: 'Sign in',
-    SIGN_UP: 'Sign up',
     SIGN_OUT: 'Sign out',
 
     LIKE: 'Like',

@@ -12,15 +12,5 @@ export const UserPostsConnector = ({ userId }: Props) => {
         userId,
     });
 
-    if (data.errors) {
-        return (
-            <div>
-                {data.errors.map((error) => (
-                    <p key={error.code}>{error.message}</p>
-                ))}
-            </div>
-        );
-    }
-
     return <PostList posts={data.data} />;
 };

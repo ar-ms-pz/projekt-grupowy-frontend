@@ -1,19 +1,29 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Outlet } from '@tanstack/react-router';
 import { createRootRoute } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/router-devtools';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Header } from '../components/header/header';
+import { Suspense } from 'react';
+import { GlobalLayout } from '../layouts/global/global-layout';
+import { GlobalLoader } from '../components/global-loader/global-loader';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { NotFoundPage } from '../pages/not-found/not-found';
 
 const queryClient = new QueryClient();
 
 export const Route = createRootRoute({
     component: () => (
         <QueryClientProvider client={queryClient}>
-            <Header />
-            <Outlet />
-            <TanStackRouterDevtools />
-            <ReactQueryDevtools />
+            <Suspense fallback={<GlobalLoader />}>
+                <GlobalLayout />
+            </Suspense>
+            <ToastContainer position="bottom-right" theme="dark" />
+        </QueryClientProvider>
+    ),
+    notFoundComponent: () => (
+        <QueryClientProvider client={queryClient}>
+            <Suspense fallback={<GlobalLoader />}>
+                <NotFoundPage />
+            </Suspense>
+            <ToastContainer position="bottom-right" theme="dark" />
         </QueryClientProvider>
     ),
 });

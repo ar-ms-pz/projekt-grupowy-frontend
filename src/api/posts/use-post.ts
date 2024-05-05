@@ -3,34 +3,22 @@ import { QueryKeys } from '../query-keys';
 import { Response } from '../models/response';
 import { Post } from '../models/post';
 import { Endpoints } from '../endpoints';
-import {
-    fetchErrorResponse,
-    unknownErrorResponse,
-} from '../erorrs/error-responses';
-import { callApi } from '../callApi';
+
+import { callApi } from '../call-api';
+import { FetchError } from '../fetch-error';
 
 interface Params {
     id: number;
 }
 
 export const usePost = ({ id }: Params) => {
-    return useSuspenseQuery<Response<Post>>({
-        queryKey: [QueryKeys.POSTS, id],
+    return useSuspenseQuery<Response<Post>, FetchError>({
+        queryKey: [QueryKeys.POST, id],
         queryFn: async ({ signal }) => {
-            try {
-                const response = await callApi(Endpoints.POST, {
-                    params: { id: id.toString() },
-                    signal,
-                });
-
-                return response.json();
-            } catch (error) {
-                if (error instanceof Error) {
-                    return fetchErrorResponse(error.message);
-                }
-
-                return unknownErrorResponse;
-            }
+            return callApi(Endpoints.POST, {
+                params: { id: id.toString() },
+                signal,
+            });
         },
     });
 };

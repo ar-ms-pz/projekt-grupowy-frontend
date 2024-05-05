@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { Response } from '../models/response';
 import { Endpoints } from '../endpoints';
-import { callApi } from '../callApi';
+import { callApi } from '../call-api';
 import { User } from '../models/user';
 
 interface Variables {
@@ -9,18 +9,16 @@ interface Variables {
     password: string;
 }
 
-export const useSignIn = () => {
+export const useSignUp = () => {
     return useMutation<Response<User>, Error, Variables>({
         mutationFn: async ({ username, password }) => {
-            const response = await callApi(Endpoints.LOGIN, {
+            return callApi(Endpoints.REGISTER, {
                 method: 'POST',
                 body: {
                     username,
                     password,
                 },
             });
-
-            return response.json();
         },
     });
 };
