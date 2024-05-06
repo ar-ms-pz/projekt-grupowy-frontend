@@ -13,6 +13,17 @@ body {
     background-color: var(--color-background);
     color: var(--color-text);
     font-family: var(--font-family);
+
+    /* Fixes indent right to header when scroll is disabled */
+    &::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3.75rem;
+        background-color: var(--color-stone);
+    }
 }
 
 :root {

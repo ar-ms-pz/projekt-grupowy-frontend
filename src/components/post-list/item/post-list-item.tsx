@@ -9,10 +9,12 @@ import { STRINGS } from '../../../strings';
 import { RelativeDate } from '../../relative-date/relative-date';
 import { Dropdown, DropdownItem } from '../../dropdown/dropdown';
 import { Expand, Heart, Pencil, Trash2 } from 'lucide-react';
-import { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import { useUserContext } from '../../../context/user-context';
 import { useNavigate } from '@tanstack/react-router';
 import { useSetLike } from '../../../api/posts/like/use-set-like';
+import { EditPostModal } from '../../post-modal/edit-post-modal';
+import { DeletePostModal } from '../../post-modal/delete-post-modal';
 
 interface Props {
     imageSrc: string;
@@ -25,26 +27,53 @@ interface Props {
     createdAt: string;
 }
 
-export const PostListItem = ({
-    imageSrc,
-    id,
-    description,
-    likes,
-    isLiked,
-    authorName,
-    createdAt,
-    authorId,
-}: Props) => {
-    const user = useUserContext();
-    const navigate = useNavigate();
+export const PostListItem = forwardRef<HTMLLIElement, Props>(
+    (
+        {
+            imageSrc,
+            id,
+            description,
+            likes,
+            isLiked,
+            authorName,
+            createdAt,
+            authorId,
+        },
+        ref,
+    ) => {
+        const user = useUserContext();
+        const navigate = useNavigate();
 
-    const { mutateAsync: setLike, isPending: isPendingSetLike } = useSetLike({
-        id,
-    });
+        const { mutateAsync: setLike, isPending: isPendingSetLike } =
+            useSetLike({
+                id,
+            });
 
-    const items = useMemo<DropdownItem[]>(() => {
-        if (!user)
-            return [
+        const items = useMemo<DropdownItem[]>(() => {
+            if (!user)
+                return [
+                    {
+                        id: 'expand',
+                        text: 'Expand',
+                        icon: <Expand />,
+                        onClick: () =>
+                            navigate({
+                                to: `/posts/$postId`,
+                                params: {
+                                    postId: id.toString(),
+                                },
+                            }),
+                    },
+                ];
+
+            const defaultItems = [
+                {
+                    id: 'like',
+                    text: isLiked ? 'Remove Like' : 'Like',
+                    icon: <Heart fill={isLiked ? 'white' : 'transparent'} />,
+                    onClick: () => setLike({ like: !isLiked }),
+                    disabled: isPendingSetLike,
+                },
                 {
                     id: 'expand',
                     text: 'Expand',
@@ -59,105 +88,98 @@ export const PostListItem = ({
                 },
             ];
 
-        const defaultItems = [
-            {
-                id: 'like',
-                text: isLiked ? 'Remove Like' : 'Like',
-                icon: <Heart fill={isLiked ? 'white' : 'transparent'} />,
-                onClick: () => setLike({ like: !isLiked }),
-                disabled: isPendingSetLike,
-            },
-            {
-                id: 'expand',
-                text: 'Expand',
-                icon: <Expand />,
-                onClick: () =>
-                    navigate({
-                        to: `/posts/$postId`,
-                        params: {
-                            postId: id.toString(),
-                        },
-                    }),
-            },
-        ];
+            if (user.id !== authorId) return defaultItems;
 
-        if (user.id !== authorId) return defaultItems;
-
-        return [
-            ...defaultItems,
-            {
-                id: 'edit',
-                text: 'Edit',
-                icon: <Pencil />,
-                onClick: () => {
-                    // TODO
-                    console.log('Edit');
+            return [
+                ...defaultItems,
+                {
+                    id: 'edit',
+                    text: 'Edit',
+                    icon: <Pencil />,
+                    render: (children) => (
+                        <EditPostModal
+                            trigger={children}
+                            postId={id}
+                            imageUrl={imageSrc}
+                        />
+                    ),
                 },
-            },
-            {
-                id: 'delete',
-                text: 'Delete',
-                icon: <Trash2 />,
-                onClick: () => {
-                    // TODO
-                    console.log('Delete');
+                {
+                    id: 'delete',
+                    text: 'Delete',
+                    icon: <Trash2 />,
+                    render: (children) => (
+                        <DeletePostModal trigger={children} postId={id} />
+                    ),
                 },
-            },
-        ];
-    }, [authorId, id, isLiked, navigate, setLike, user, isPendingSetLike]);
+            ];
+        }, [
+            user,
+            isLiked,
+            isPendingSetLike,
+            authorId,
+            navigate,
+            id,
+            setLike,
+            imageSrc,
+        ]);
 
-    return (
-        <article className={$.wrapper}>
-            <div className={$.header}>
-                <Link
-                    to="/users/$userId"
-                    params={{
-                        userId: authorId.toString(),
-                    }}
-                    className={$.author}
-                >
-                    <Avatar initials={getInitials(authorName)} />
-                    {capitalize(authorName)}
-                </Link>
-
-                <Dropdown items={items} />
-            </div>
-            <h2 className={$.description}>{description}</h2>
-            <Link
-                to={`/posts/$postId`}
-                params={{
-                    postId: id.toString(),
-                }}
-                className={$.imageWrapper}
-            >
-                <img
-                    src={imageSrc}
-                    alt={description ?? 'Post image'}
-                    className={$.image}
-                />
-            </Link>
-            <div className={$.bottomWrapper}>
-                <Button
-                    variant="ghost"
-                    className={$.button}
-                    disabled={!user || isPendingSetLike}
-                    onClick={() => setLike({ like: !isLiked })}
-                >
-                    <Heart size="20" fill={isLiked ? 'white' : 'transparent'} />
-
-                    <StringWithParams
-                        value={
-                            likes === 1
-                                ? STRINGS.LIKED_BY_SINGLE
-                                : STRINGS.LIKED_BY_MANY
-                        }
+        return (
+            <li className={$.wrapper} ref={ref}>
+                <div className={$.header}>
+                    <Link
+                        to="/users/$userId"
                         params={{
-                            likes: likes.toString(),
+                            userId: authorId.toString(),
                         }}
+                        className={$.author}
+                    >
+                        <Avatar initials={getInitials(authorName)} />
+                        {capitalize(authorName)}
+                    </Link>
+
+                    <Dropdown items={items} />
+                </div>
+                <h2 className={$.description}>{description}</h2>
+                <Link
+                    to={`/posts/$postId`}
+                    params={{
+                        postId: id.toString(),
+                    }}
+                    className={$.imageWrapper}
+                >
+                    <img
+                        src={imageSrc}
+                        alt={description ?? 'Post image'}
+                        className={$.image}
                     />
-                </Button>
-                <RelativeDate className={$.createdDate} date={createdAt} />
-            </div>
-        </article>
-    );
-};
+                </Link>
+                <div className={$.bottomWrapper}>
+                    <Button
+                        variant="ghost"
+                        className={$.button}
+                        disabled={!user || isPendingSetLike}
+                        onClick={() => setLike({ like: !isLiked })}
+                    >
+                        <Heart
+                            size="20"
+                            fill={isLiked ? 'white' : 'transparent'}
+                        />
+
+                        <StringWithParams
+                            value={
+                                likes === 1
+                                    ? STRINGS.LIKED_BY_SINGLE
+                                    : STRINGS.LIKED_BY_MANY
+                            }
+                            params={{
+                                likes: likes.toString(),
+                            }}
+                        />
+                    </Button>
+                    <RelativeDate className={$.createdDate} date={createdAt} />
+                </div>
+            </li>
+        );
+    },
+);

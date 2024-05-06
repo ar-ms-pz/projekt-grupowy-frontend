@@ -16,7 +16,7 @@ export const ErrorPage = ({ error }: ErrorComponentProps) => {
 
         return (
             <div className={$.container}>
-                <h1 className={$.title}>{error.status}</h1>
+                <h1 className={$.title}>{error.status ?? 500}</h1>
                 <div className={$.divider} />
                 {messages.map((message) => (
                     <p className={$.error} key={message}>

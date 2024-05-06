@@ -1,15 +1,20 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import $ from './post.module.scss';
 import { Avatar } from '../avatar/avatar';
 import { getInitials } from '../../utils/getInitials';
 import { capitalize } from '../../utils/capitalize';
 import { RelativeDate } from '../relative-date/relative-date';
 import { Button } from '../button/button';
-import { Dropdown } from '../dropdown/dropdown';
-import { useState } from 'react';
-import { Pencil, Trash, X } from 'lucide-react';
+import { Dropdown, DropdownItem } from '../dropdown/dropdown';
+import { useMemo, useState } from 'react';
+import { Heart, Pencil, Trash2, X } from 'lucide-react';
+import { EditPostModal } from '../post-modal/edit-post-modal';
+import { DeletePostModal } from '../post-modal/delete-post-modal';
+import { useUserContext } from '../../context/user-context';
+import { useSetLike } from '../../api/posts/like/use-set-like';
 
 type Props = {
+    id: number;
     imageSrc: string;
     description: string | null;
     isLiked: boolean | null;
@@ -18,33 +23,78 @@ type Props = {
     createdAt: string;
 };
 
-const items = [
-    {
-        id: 'edit',
-        text: 'Edit',
-        icon: <Pencil size={20} />,
-        onClick: () => {
-            console.log('Edit');
-        },
-    },
-    {
-        id: 'delete',
-        text: 'Delete',
-        icon: <Trash size={20} />,
-        onClick: () => {
-            console.log('Delete');
-        },
-    },
-];
-
 export const Post = ({
+    id,
     imageSrc,
     description,
     authorName,
     createdAt,
     authorId,
+    isLiked,
 }: Props) => {
     const [isInfoLocked, setIsInfoLocked] = useState(false);
+    const navigate = useNavigate();
+    const user = useUserContext();
+    const { mutateAsync: setLike, isPending: isPendingSetLike } = useSetLike({
+        id,
+    });
+
+    const items = useMemo<DropdownItem[]>(() => {
+        if (!user) return [];
+
+        const defaultItems = [
+            {
+                id: 'like',
+                text: isLiked ? 'Remove Like' : 'Like',
+                icon: <Heart fill={isLiked ? 'white' : 'transparent'} />,
+                onClick: () => setLike({ like: !isLiked }),
+                disabled: isPendingSetLike,
+            },
+        ];
+
+        if (user.id !== authorId) return defaultItems;
+
+        return [
+            ...defaultItems,
+            {
+                id: 'edit',
+                text: 'Edit',
+                icon: <Pencil />,
+                render: (children) => (
+                    <EditPostModal
+                        trigger={children}
+                        postId={id}
+                        imageUrl={imageSrc}
+                    />
+                ),
+            },
+            {
+                id: 'delete',
+                text: 'Delete',
+                icon: <Trash2 />,
+                render: (children) => (
+                    <DeletePostModal
+                        trigger={children}
+                        postId={id}
+                        afterDelete={() =>
+                            navigate({
+                                to: '/',
+                            })
+                        }
+                    />
+                ),
+            },
+        ];
+    }, [
+        user,
+        isLiked,
+        isPendingSetLike,
+        authorId,
+        setLike,
+        id,
+        imageSrc,
+        navigate,
+    ]);
 
     return (
         <main className={$.wrapper}>
@@ -59,7 +109,7 @@ export const Post = ({
                 </Button>
             </Link>
 
-            <Dropdown className={$.dropdown} items={items} />
+            {user && <Dropdown className={$.dropdown} items={items} />}
             <img src={imageSrc} alt="Post" className={$.image} />
 
             <aside

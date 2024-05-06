@@ -23,5 +23,10 @@ export const UserHeadingConnector = ({ userId }: Props) => {
             ? STRINGS.MY_POSTS
             : `${capitalize(data.data.name)}'s posts`;
 
-    return <Heading heading={heading} />;
+    return (
+        <Heading
+            heading={heading}
+            isCreateButtonVisible={currentUser?.id === userId}
+        />
+    );
 };

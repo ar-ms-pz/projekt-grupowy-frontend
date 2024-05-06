@@ -4,9 +4,11 @@ import { ErrorCodes } from './error-codes';
 import { FetchError } from './fetch-error';
 
 interface RequestOptions {
-    body?: {
-        [key: string]: unknown;
-    };
+    body?:
+        | {
+              [key: string]: unknown;
+          }
+        | FormData;
     headers?: {
         [key: string]: string;
     };
@@ -22,7 +24,6 @@ interface RequestOptions {
 }
 
 const HEADERS_CONFIG = {
-    'Content-Type': 'application/json',
     Accept: 'application/json',
 };
 
@@ -37,6 +38,11 @@ export const callApi = async (
     const reqHeaders = {
         ...HEADERS_CONFIG,
         ...(headers ?? {}),
+        ...(!(body instanceof FormData)
+            ? {
+                  'Content-Type': 'application/json',
+              }
+            : {}),
     };
 
     const queryEntries = query ? Object.entries(query) : [];
@@ -75,9 +81,13 @@ export const callApi = async (
             queryString && queryString !== '?' ? queryString : ''
         }`,
     );
+
     try {
         const response = await fetch(url, {
-            body: body ? JSON.stringify(body) : undefined,
+            body:
+                body && !(body instanceof FormData)
+                    ? JSON.stringify(body)
+                    : body,
             headers: reqHeaders,
             credentials: 'include',
             signal,

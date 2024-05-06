@@ -3,6 +3,7 @@ import { Response } from '../models/response';
 import { Endpoints } from '../endpoints';
 import { callApi } from '../call-api';
 import { User } from '../models/user';
+import { FetchError } from '../fetch-error';
 
 interface Variables {
     username: string;
@@ -10,7 +11,7 @@ interface Variables {
 }
 
 export const useSignIn = () => {
-    return useMutation<Response<User>, Error, Variables>({
+    return useMutation<Response<User>, FetchError, Variables>({
         mutationFn: async ({ username, password }) => {
             return callApi(Endpoints.LOGIN, {
                 method: 'POST',

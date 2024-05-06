@@ -9,7 +9,7 @@ import {
     useRole,
 } from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { cloneElement, useState } from 'react';
+import { cloneElement } from 'react';
 import { createPortal } from 'react-dom';
 import $ from './modal.module.scss';
 import { Button } from '../button/button';
@@ -19,14 +19,20 @@ interface Props {
     trigger: React.ReactElement;
     children: React.ReactNode;
     title: string;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
 }
 
-export const Modal = ({ trigger, children, title }: Props) => {
-    const [isOpen, setIsOpen] = useState(false);
-
+export const Modal = ({
+    trigger,
+    children,
+    title,
+    open,
+    onOpenChange,
+}: Props) => {
     const { refs, context } = useFloating<HTMLDivElement>({
-        open: isOpen,
-        onOpenChange: setIsOpen,
+        open,
+        onOpenChange,
     });
 
     const { getReferenceProps, getFloatingProps } = useInteractions([
@@ -46,7 +52,7 @@ export const Modal = ({ trigger, children, title }: Props) => {
             })}
             {createPortal(
                 <AnimatePresence>
-                    {isOpen && (
+                    {open && (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -70,7 +76,9 @@ export const Modal = ({ trigger, children, title }: Props) => {
                                             <Button
                                                 variant="ghost"
                                                 iconOnly
-                                                onClick={() => setIsOpen(false)}
+                                                onClick={() =>
+                                                    onOpenChange(false)
+                                                }
                                             >
                                                 <X size={20} />
                                             </Button>

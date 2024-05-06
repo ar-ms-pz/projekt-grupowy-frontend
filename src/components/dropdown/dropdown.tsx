@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactElement, ReactNode, useState } from 'react';
 import $ from './dropdown.module.scss';
 import { Button } from '../button/button';
 import {
@@ -20,8 +20,9 @@ export type DropdownItem = {
     id: string;
     text: string;
     icon: ReactNode;
-    onClick: () => void;
+    onClick?: () => void;
     disabled?: boolean;
+    render?: (children: ReactElement) => ReactNode;
 };
 
 type Props = {
@@ -90,18 +91,28 @@ export const Dropdown = ({
                         ref={refs.setFloating}
                         {...getFloatingProps()}
                     >
-                        {items.map((item) => (
-                            <li key={item.id} className={$.dropdownListItem}>
-                                <button
-                                    onClick={item.onClick}
-                                    disabled={item.disabled}
-                                    className={$.dropdownItem}
-                                >
-                                    {item.text}
-                                    {item.icon}
-                                </button>
-                            </li>
-                        ))}
+                        {items.map(
+                            ({
+                                render = (c) => c,
+                                id,
+                                onClick,
+                                disabled,
+                                icon,
+                                text,
+                            }) =>
+                                render(
+                                    <li key={id} className={$.dropdownListItem}>
+                                        <button
+                                            onClick={onClick}
+                                            disabled={disabled}
+                                            className={$.dropdownItem}
+                                        >
+                                            {text}
+                                            {icon}
+                                        </button>
+                                    </li>,
+                                ),
+                        )}
                     </motion.ul>
                 )}
             </AnimatePresence>

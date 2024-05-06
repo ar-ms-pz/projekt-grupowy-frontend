@@ -1,4 +1,8 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+    InfiniteData,
+    QueryKey,
+    useSuspenseInfiniteQuery,
+} from '@tanstack/react-query';
 import { QueryKeys } from '../query-keys';
 import { DEFAULT_LIMIT } from '../../config';
 import { Endpoints } from '../endpoints';
@@ -18,17 +22,30 @@ export const usePosts = ({
     limit = DEFAULT_LIMIT,
     userId,
 }: Params) => {
-    return useSuspenseQuery<PaginatedResponse<Post>, FetchError>({
-        queryKey: [QueryKeys.POSTS, offset, limit, userId],
-        queryFn: async ({ signal }) => {
+    return useSuspenseInfiniteQuery<
+        PaginatedResponse<Post>,
+        FetchError,
+        InfiniteData<PaginatedResponse<Post>>,
+        QueryKey,
+        number
+    >({
+        queryKey: [QueryKeys.POSTS, userId, offset, limit],
+        queryFn: async ({ signal, pageParam }) => {
             return callApi(Endpoints.POSTS, {
                 signal,
                 query: {
-                    offset: offset.toString(),
+                    offset: pageParam.toString(),
                     limit: limit.toString(),
                     userId: userId?.toString(),
                 },
             });
         },
+        getNextPageParam: (lastPage) => {
+            const newParam = lastPage.info.offset + lastPage.info.limit;
+            if (lastPage.info.total <= newParam) return null;
+
+            return lastPage.info.offset + lastPage.info.limit;
+        },
+        initialPageParam: offset,
     });
 };

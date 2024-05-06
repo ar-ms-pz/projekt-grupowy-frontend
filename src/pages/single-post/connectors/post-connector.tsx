@@ -15,6 +15,7 @@ export const SinglePostConnector = ({ id }: Props) => {
 
     return (
         <Post
+            id={id}
             imageSrc={getImageUrl(image)}
             description={description}
             authorName={author.name}

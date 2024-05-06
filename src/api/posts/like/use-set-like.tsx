@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+    useMutation,
+    useQueryClient,
+    InfiniteData,
+} from '@tanstack/react-query';
 import { Response } from '../../models/response';
 import { callApi } from '../../call-api';
 import { Endpoints } from '../../endpoints';
@@ -48,24 +52,31 @@ export const useSetLike = ({ id }: Params) => {
                 },
             );
 
-            queryClient.setQueriesData<Response<Post[]>>(
+            queryClient.setQueriesData<InfiniteData<Response<Post[]>>>(
                 { queryKey: [QueryKeys.POSTS] },
                 (oldData) => {
                     if (!oldData) return oldData;
 
-                    const newPosts = oldData.data.map((post) => {
-                        if (post.id !== id) return post;
+                    const newPages = oldData.pages.map((page) => {
+                        const newPosts = page.data.map((post) => {
+                            if (post.id !== id) return post;
+
+                            return {
+                                ...post,
+                                isLiked: variables.like,
+                                likes: post.likes + (variables.like ? 1 : -1),
+                            };
+                        });
 
                         return {
-                            ...post,
-                            isLiked: variables.like,
-                            likes: post.likes + (variables.like ? 1 : -1),
+                            ...page,
+                            data: newPosts,
                         };
                     });
 
                     return {
                         ...oldData,
-                        data: newPosts,
+                        pages: newPages,
                     };
                 },
             );

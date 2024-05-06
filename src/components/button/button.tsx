@@ -10,7 +10,7 @@ interface Props {
     className?: string;
     type?: 'button' | 'submit' | 'reset';
     asChild?: boolean;
-    variant?: 'primary' | 'secondary' | 'ghost';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
     iconOnly?: boolean;
     isLoading?: boolean;
     ariaExpanded?: boolean;
@@ -40,11 +40,12 @@ const Button = forwardRef<HTMLButtonElement, Props>(
                     ref={ref}
                     className={cn(
                         $.button,
+                        $.disabled,
                         variant === 'primary' && $.primary,
                         variant === 'secondary' && $.secondary,
+                        variant === 'danger' && $.danger,
                         variant === 'ghost' && $.ghost,
                         iconOnly && $.iconOnly,
-                        disabled && $.disabled,
                         className,
                     )}
                     type={type}
@@ -67,6 +68,7 @@ const Button = forwardRef<HTMLButtonElement, Props>(
                     $.button,
                     variant === 'primary' && $.primary,
                     variant === 'secondary' && $.secondary,
+                    variant === 'danger' && $.danger,
                     variant === 'ghost' && $.ghost,
                     iconOnly && $.iconOnly,
                     disabled && $.disabled,
