@@ -98,9 +98,11 @@ export const PostListItem = forwardRef<HTMLLIElement, Props>(
                     icon: <Pencil />,
                     render: (children) => (
                         <EditPostModal
+                            key="edit"
                             trigger={children}
                             postId={id}
                             imageUrl={imageSrc}
+                            initialDescription={description}
                         />
                     ),
                 },
@@ -109,7 +111,11 @@ export const PostListItem = forwardRef<HTMLLIElement, Props>(
                     text: 'Delete',
                     icon: <Trash2 />,
                     render: (children) => (
-                        <DeletePostModal trigger={children} postId={id} />
+                        <DeletePostModal
+                            key="delete"
+                            trigger={children}
+                            postId={id}
+                        />
                     ),
                 },
             ];
@@ -122,6 +128,7 @@ export const PostListItem = forwardRef<HTMLLIElement, Props>(
             id,
             setLike,
             imageSrc,
+            description,
         ]);
 
         return (

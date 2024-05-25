@@ -13,6 +13,7 @@ interface Props {
     trigger: React.ReactElement;
     postId: number;
     imageUrl: string;
+    initialDescription: string | null;
 }
 
 const STRINGS = {
@@ -29,7 +30,12 @@ const formSchema = z.object({
 
 type FormModel = z.infer<typeof formSchema>;
 
-export const EditPostModal = ({ trigger, imageUrl, postId }: Props) => {
+export const EditPostModal = ({
+    trigger,
+    imageUrl,
+    postId,
+    initialDescription,
+}: Props) => {
     const [open, setOpen] = useState(false);
     const { mutateAsync, isPending } = useEditPost({ id: postId });
 
@@ -40,6 +46,9 @@ export const EditPostModal = ({ trigger, imageUrl, postId }: Props) => {
         reset,
     } = useForm<FormModel>({
         resolver: zodResolver(formSchema),
+        defaultValues: {
+            description: initialDescription ?? undefined,
+        },
     });
 
     const onOpenChange = useCallback(

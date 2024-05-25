@@ -1,4 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+    InfiniteData,
+    useMutation,
+    useQueryClient,
+} from '@tanstack/react-query';
 import { Response } from '../models/response';
 import { Endpoints } from '../endpoints';
 import { callApi } from '../call-api';
@@ -39,20 +43,27 @@ export const useEditPost = ({ id }: Params) => {
                 () => data,
             );
 
-            queryClient.setQueriesData<Response<Post[]>>(
+            queryClient.setQueriesData<InfiniteData<Response<Post[]>>>(
                 { queryKey: [QueryKeys.POSTS] },
                 (oldData) => {
                     if (!oldData) return oldData;
 
-                    const newPosts = oldData.data.map((post) => {
-                        if (post.id !== data.data.id) return post;
+                    const newPages = oldData.pages.map((page) => {
+                        const newPosts = page.data.map((post) => {
+                            if (post.id !== data.data.id) return post;
 
-                        return data.data;
+                            return data.data;
+                        });
+
+                        return {
+                            ...page,
+                            data: newPosts,
+                        };
                     });
 
                     return {
                         ...oldData,
-                        data: newPosts,
+                        pages: newPages,
                     };
                 },
             );
@@ -66,7 +77,7 @@ export const useEditPost = ({ id }: Params) => {
         },
         onError: (error) => {
             const errorCode =
-                error.errors[0]?.code ?? ErrorCodes.INTERNAL_SERVER_ERROR;
+                error.errors?.[0]?.code ?? ErrorCodes.INTERNAL_SERVER_ERROR;
 
             toast.error(
                 <Toast

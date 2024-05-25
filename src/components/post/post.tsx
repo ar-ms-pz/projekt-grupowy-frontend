@@ -62,9 +62,11 @@ export const Post = ({
                 icon: <Pencil />,
                 render: (children) => (
                     <EditPostModal
+                        key="edit"
                         trigger={children}
                         postId={id}
                         imageUrl={imageSrc}
+                        initialDescription={description}
                     />
                 ),
             },
@@ -74,6 +76,7 @@ export const Post = ({
                 icon: <Trash2 />,
                 render: (children) => (
                     <DeletePostModal
+                        key="delete"
                         trigger={children}
                         postId={id}
                         afterDelete={() =>
@@ -94,6 +97,7 @@ export const Post = ({
         id,
         imageSrc,
         navigate,
+        description,
     ]);
 
     return (
