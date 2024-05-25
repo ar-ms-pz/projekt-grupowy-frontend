@@ -91,7 +91,11 @@ export const PostList = ({
     if (!posts.length)
         return (
             <div className={$.empty}>
-                <h2 className={$.emptyTitle}>{STRINGS.NO_POSTS_FOUND}</h2>
+                <h2 className={$.emptyTitle}>
+                    {isOtherUserWall
+                        ? STRINGS.NO_POSTS_FOUND
+                        : STRINGS.ADD_YOUR_FIRST_POST}
+                </h2>
                 <CallToAction user={user} isOtherUserWall={isOtherUserWall} />
             </div>
         );
