@@ -17,7 +17,6 @@ export const Route = createRootRoute({
                 <Suspense fallback={<GlobalLoader />}>
                     <GlobalLayout />
                 </Suspense>
-                <ToastContainer position="bottom-right" theme="dark" />
             </ThemeProvider>
         </QueryClientProvider>
     ),
