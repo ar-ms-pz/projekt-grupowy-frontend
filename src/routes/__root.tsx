@@ -6,16 +6,19 @@ import { GlobalLoader } from '../components/global-loader/global-loader';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { NotFoundPage } from '../pages/not-found/not-found';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const queryClient = new QueryClient();
 
 export const Route = createRootRoute({
     component: () => (
         <QueryClientProvider client={queryClient}>
-            <Suspense fallback={<GlobalLoader />}>
-                <GlobalLayout />
-            </Suspense>
-            <ToastContainer position="bottom-right" theme="dark" />
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+                <Suspense fallback={<GlobalLoader />}>
+                    <GlobalLayout />
+                </Suspense>
+                <ToastContainer position="bottom-right" theme="dark" />
+            </ThemeProvider>
         </QueryClientProvider>
     ),
     notFoundComponent: () => (

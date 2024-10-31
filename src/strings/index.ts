@@ -1,5 +1,5 @@
 export const STRINGS = {
-    PLATFORMY_TECHNOLOGICZNE: 'Platformy technologiczne',
+    BRAND_NAME: 'Nieruchomex',
     PG_LOGO: 'Politechnika Gdańska Logo',
 
     HOME: 'Home',
@@ -16,4 +16,6 @@ export const STRINGS = {
 
     LIKED_BY_SINGLE: 'Liked by {{likes}} person',
     LIKED_BY_MANY: 'Liked by {{likes}} people',
+
+    LOADING: 'Loading...',
 };
