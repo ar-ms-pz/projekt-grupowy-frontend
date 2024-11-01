@@ -10,12 +10,13 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useUserContext } from '@/context/user-context';
 import { getErrorText } from '@/helpers/get-error-text';
 import { useAuth } from '@/hooks/use-auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
-import { Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -87,6 +88,8 @@ export const SignUpPage = () => {
     const [isPending, setIsPending] = useState(false);
 
     const { signUp } = useAuth();
+    const user = useUserContext();
+    const navigate = useNavigate();
 
     const form = useForm<FormModel>({
         resolver: zodResolver(formSchema),
@@ -96,6 +99,14 @@ export const SignUpPage = () => {
             confirmPassword: '',
         },
     });
+
+    useEffect(() => {
+        if (user) {
+            navigate({
+                to: '/',
+            });
+        }
+    }, [navigate, user]);
 
     const onSubmit = async ({ username, password }: FormModel) => {
         setIsPending(true);
@@ -111,6 +122,9 @@ export const SignUpPage = () => {
             setIsPending(false);
         }
     };
+
+    // User will be redirected
+    if (user) return null;
 
     return (
         <div className="grid grid-cols-1 h-screen w-screen lg:grid-cols-2 justify-center place-items-center lg:place-items-stretch">

@@ -1,5 +1,6 @@
 import { FetchError } from '@/api/fetch-error';
 import { Logo } from '@/components/logo';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,12 +11,13 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useUserContext } from '@/context/user-context';
 import { getErrorText } from '@/helpers/get-error-text';
 import { useAuth } from '@/hooks/use-auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
-import { Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -65,6 +67,8 @@ export const SignInPage = () => {
     const [error, setError] = useState<string | null>(null);
     const [isPending, setIsPending] = useState(false);
     const { signIn } = useAuth();
+    const user = useUserContext();
+    const navigate = useNavigate();
 
     const form = useForm<FormModel>({
         resolver: zodResolver(formSchema),
@@ -73,6 +77,14 @@ export const SignInPage = () => {
             password: '',
         },
     });
+
+    useEffect(() => {
+        if (user) {
+            navigate({
+                to: '/',
+            });
+        }
+    }, [navigate, user]);
 
     const onSubmit = async ({ username, password }: FormModel) => {
         setIsPending(true);
@@ -88,6 +100,9 @@ export const SignInPage = () => {
             setIsPending(false);
         }
     };
+
+    // User will be redirected
+    if (user) return null;
 
     return (
         <div className="grid grid-cols-1 h-screen w-screen lg:grid-cols-2 justify-center place-items-center lg:place-items-stretch">
@@ -113,6 +128,9 @@ export const SignInPage = () => {
                     <Logo />
                 </div>
                 <div className="mx-auto flex w-full flex-col justify-center h-full space-y-6 p-12 sm:w-96">
+                    <div className="absolute top-6 right-6">
+                        <ThemeToggle />
+                    </div>
                     <div className="flex flex-col space-y-2 text-center">
                         <h1 className="text-2xl font-semibold tracking-tight">
                             {STRINGS.SIGN_IN}

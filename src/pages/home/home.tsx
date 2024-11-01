@@ -4,7 +4,6 @@ import { PostsConnector } from './connectors/posts-connector';
 import { STRINGS } from '../../strings';
 import { Heading } from '../../components/heading/heading';
 import { useUserContext } from '../../context/user-context';
-import $ from './home.module.scss';
 import { Loader } from '../../components/loader/loader';
 
 export const HomePage = () => {
@@ -18,7 +17,7 @@ export const HomePage = () => {
             />
             <Suspense
                 fallback={
-                    <div className={$.loadingContainer}>
+                    <div>
                         <Loader />
                     </div>
                 }

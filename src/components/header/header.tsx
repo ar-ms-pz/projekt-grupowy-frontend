@@ -1,26 +1,14 @@
-import { Link } from '@tanstack/react-router';
-import { STRINGS } from '../../strings';
-import $ from './header.module.scss';
 import { useUserContext } from '../../context/user-context';
-import { UserNav } from './auth-nav/user-nav';
-import { NoAuthNav } from './no-user-nav/no-auth-nav';
+import { UserNav } from './user-nav/user-nav';
+import { NoAuthNav } from './no-auth-nav';
+import { Logo } from '../logo';
 
 export const Header = () => {
     const user = useUserContext();
 
     return (
-        <header className={$.header}>
-            <Link to="/" className={$.link}>
-                <img
-                    className={$.logo}
-                    src="/logo.webp"
-                    alt={STRINGS.PG_LOGO}
-                />
-                <h1 className={$.headerText}>
-                    {STRINGS.PLATFORMY_TECHNOLOGICZNE}
-                </h1>
-            </Link>
-
+        <header className="border-b flex sticky z-10 justify-between h-16 items-center">
+            <Logo className="h-full" />
             {user ? <UserNav user={user} /> : <NoAuthNav />}
         </header>
     );

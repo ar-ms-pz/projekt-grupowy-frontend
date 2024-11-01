@@ -2,11 +2,19 @@ import { STRINGS } from '@/strings';
 import { Home } from 'lucide-react';
 import { Button } from './ui/button';
 import { Link } from '@tanstack/react-router';
+import { cn } from '@/lib/utils';
 
-export const Logo = () => (
+interface Props {
+    className?: string;
+}
+
+export const Logo = ({ className }: Props) => (
     <Button
         variant="ghost"
-        className="py-6 flex items-center text-lg font-medium"
+        className={cn(
+            'rounded-none py-6 flex items-center text-lg font-medium hover:bg-transparent',
+            className,
+        )}
         asChild
     >
         <Link to="/">
