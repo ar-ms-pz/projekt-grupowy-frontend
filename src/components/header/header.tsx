@@ -7,7 +7,7 @@ export const Header = () => {
     const user = useUserContext();
 
     return (
-        <header className="border-b flex sticky z-10 justify-between h-16 items-center">
+        <header className="border-b flex sticky justify-between h-16 items-center top-0 bg-background z-50">
             <Logo className="h-full" />
             {user ? <UserNav user={user} /> : <NoAuthNav />}
         </header>

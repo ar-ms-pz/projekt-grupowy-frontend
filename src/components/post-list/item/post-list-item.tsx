@@ -1,192 +1,162 @@
-import { Link } from '@tanstack/react-router';
-import $ from './post-list-item.module.scss';
-import { Avatar } from '../../avatar/avatar';
-import { getInitials } from '../../../utils/getInitials';
-import { capitalize } from '../../../utils/capitalize';
-import { Button } from '../../button/button';
-import { StringWithParams } from '../../string/string';
-import { STRINGS } from '../../../strings';
-import { RelativeDate } from '../../relative-date/relative-date';
-import { Dropdown, DropdownItem } from '../../dropdown/dropdown';
-import { Expand, Heart, Pencil, Trash2 } from 'lucide-react';
-import { forwardRef, useMemo } from 'react';
-import { useUserContext } from '../../../context/user-context';
-import { useNavigate } from '@tanstack/react-router';
-import { useSetLike } from '../../../api/posts/like/use-set-like';
-import { EditPostModal } from '../../post-modal/edit-post-modal';
-import { DeletePostModal } from '../../post-modal/delete-post-modal';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Post } from '@/api/models/post';
+import {
+    Carousel,
+    CarouselApi,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from '@/components/ui/carousel';
+import { useEffect, useState } from 'react';
+import { getImageUrl } from '@/utils/getImageUrl';
+import { BoxIcon, LandPlotIcon, MapPinIcon, ReceiptIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { capitalize } from '@/utils/capitalize';
+import { Button } from '@/components/ui/button';
+import { CameraIcon } from '@radix-ui/react-icons';
 
-interface Props {
-    imageSrc: string;
-    description: string | null;
-    id: number;
-    likes: number;
-    isLiked: boolean | null;
-    authorName: string;
-    authorId: number;
-    createdAt: string;
-}
+const STRINGS = {
+    PER_MONTH: 'per month',
+    ROOM: 'room',
+    ROOMS: 'rooms',
+    VIEW_DETAILS: 'View details',
+    OF: 'of',
+};
 
-export const PostListItem = forwardRef<HTMLLIElement, Props>(
-    (
-        {
-            imageSrc,
-            id,
-            description,
-            likes,
-            isLiked,
-            authorName,
-            createdAt,
-            authorId,
-        },
-        ref,
-    ) => {
-        const user = useUserContext();
-        const navigate = useNavigate();
+const formatPrice = (price: number, type: 'RENTAL' | 'SALE') => {
+    const formattedPrice = price.toLocaleString('pl-PL', {
+        style: 'currency',
+        currency: 'PLN',
+        maximumFractionDigits: 0,
+    });
 
-        const { mutateAsync: setLike, isPending: isPendingSetLike } =
-            useSetLike({
-                id,
-            });
+    if (type === 'RENTAL') {
+        return `${formattedPrice} ${STRINGS.PER_MONTH}`;
+    }
 
-        const items = useMemo<DropdownItem[]>(() => {
-            if (!user)
-                return [
-                    {
-                        id: 'expand',
-                        text: 'Expand',
-                        icon: <Expand />,
-                        onClick: () =>
-                            navigate({
-                                to: `/posts/$postId`,
-                                params: {
-                                    postId: id.toString(),
-                                },
-                            }),
-                    },
-                ];
+    return formattedPrice;
+};
 
-            const defaultItems = [
-                {
-                    id: 'like',
-                    text: isLiked ? 'Remove Like' : 'Like',
-                    icon: <Heart fill={isLiked ? 'white' : 'transparent'} />,
-                    onClick: () => setLike({ like: !isLiked }),
-                    disabled: isPendingSetLike,
-                },
-                {
-                    id: 'expand',
-                    text: 'Expand',
-                    icon: <Expand />,
-                    onClick: () =>
-                        navigate({
-                            to: `/posts/$postId`,
-                            params: {
-                                postId: id.toString(),
-                            },
-                        }),
-                },
-            ];
+const formatPricePerMeter = (price: number, area: number) => {
+    const pricePerMeter = price / area;
 
-            if (user.id !== authorId) return defaultItems;
+    return `${pricePerMeter.toLocaleString('pl-PL', {
+        style: 'currency',
+        currency: 'PLN',
+        maximumFractionDigits: 0,
+    })}/m²`;
+};
 
-            return [
-                ...defaultItems,
-                {
-                    id: 'edit',
-                    text: 'Edit',
-                    icon: <Pencil />,
-                    render: (children) => (
-                        <EditPostModal
-                            key="edit"
-                            trigger={children}
-                            postId={id}
-                            imageUrl={imageSrc}
-                            initialDescription={description}
-                        />
-                    ),
-                },
-                {
-                    id: 'delete',
-                    text: 'Delete',
-                    icon: <Trash2 />,
-                    render: (children) => (
-                        <DeletePostModal
-                            key="delete"
-                            trigger={children}
-                            postId={id}
-                        />
-                    ),
-                },
-            ];
-        }, [
-            user,
-            isLiked,
-            isPendingSetLike,
-            authorId,
-            navigate,
-            id,
-            setLike,
-            imageSrc,
-            description,
-        ]);
+export const PostListItem = ({
+    id,
+    title,
+    images,
+    price,
+    type,
+    address,
+    rooms,
+    area,
+    status,
+}: Post) => {
+    const [api, setApi] = useState<CarouselApi>();
+    const [current, setCurrent] = useState(0);
+    const [count, setCount] = useState(0);
 
-        return (
-            <li className={$.wrapper} ref={ref}>
-                <div className={$.header}>
-                    <Link
-                        to="/users/$userId"
-                        params={{
-                            userId: authorId.toString(),
-                        }}
-                        className={$.author}
+    useEffect(() => {
+        if (!api) {
+            return;
+        }
+
+        setCount(api.scrollSnapList().length);
+        setCurrent(api.selectedScrollSnap() + 1);
+
+        api.on('select', () => {
+            setCurrent(api.selectedScrollSnap() + 1);
+        });
+    }, [api]);
+
+    return (
+        <Card>
+            <div className="flex">
+                <div className="basis-2/5">
+                    <Carousel
+                        setApi={setApi}
+                        className=" rounded-l-xl overflow-hidden h-full"
                     >
-                        <Avatar initials={getInitials(authorName)} />
-                        {capitalize(authorName)}
-                    </Link>
-
-                    <Dropdown items={items} />
+                        <CarouselContent className="h-full">
+                            {images.map((image, index) => (
+                                <CarouselItem key={index}>
+                                    <img
+                                        className="h-full object-cover"
+                                        src={getImageUrl(image.url)}
+                                        alt={title}
+                                    />
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="left-4" />
+                        <CarouselNext className="right-4" />
+                        <Badge
+                            variant="secondary"
+                            className="absolute bottom-4 right-4 flex gap-2"
+                        >
+                            <CameraIcon />
+                            {current} {STRINGS.OF} {count}
+                        </Badge>
+                    </Carousel>
                 </div>
-                <h2 className={$.description}>{description}</h2>
-                <Link
-                    to={`/posts/$postId`}
-                    params={{
-                        postId: id.toString(),
-                    }}
-                    className={$.imageWrapper}
-                >
-                    <img
-                        src={imageSrc}
-                        alt={description ?? 'Post image'}
-                        className={$.image}
-                    />
-                </Link>
-                <div className={$.bottomWrapper}>
-                    <Button
-                        variant="ghost"
-                        className={$.button}
-                        disabled={!user || isPendingSetLike}
-                        onClick={() => setLike({ like: !isLiked })}
-                    >
-                        <Heart
-                            size="20"
-                            fill={isLiked ? 'white' : 'transparent'}
-                        />
 
-                        <StringWithParams
-                            value={
-                                likes === 1
-                                    ? STRINGS.LIKED_BY_SINGLE
-                                    : STRINGS.LIKED_BY_MANY
-                            }
-                            params={{
-                                likes: likes.toString(),
-                            }}
-                        />
-                    </Button>
-                    <RelativeDate className={$.createdDate} date={createdAt} />
+                <div className="flex-1">
+                    <CardHeader className="pb-4">
+                        <CardTitle className="justify-between flex w-full">
+                            <div className="text-2xl font-semibold tracking-tight">
+                                {formatPrice(price, type)}
+                            </div>
+                            <Badge
+                                className="max-h-6"
+                                /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+                                variant={status.toLowerCase() as any}
+                            >
+                                {capitalize(status)}
+                            </Badge>
+                        </CardTitle>
+                        <CardDescription className="text-foreground font-medium tracking-tight">
+                            {title}
+                        </CardDescription>
+                        <CardDescription className="flex items-center gap-2 pt-2">
+                            <MapPinIcon />
+                            {address}
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex gap-4">
+                        <CardDescription className="flex items-center gap-2">
+                            <BoxIcon />
+                            {`${rooms} ${rooms === 1 ? STRINGS.ROOM : STRINGS.ROOMS}`}
+                        </CardDescription>
+                        <CardDescription className="flex items-center gap-2">
+                            <ReceiptIcon />
+                            {formatPricePerMeter(price, area)}
+                        </CardDescription>
+                        <CardDescription className="flex items-center gap-2">
+                            <LandPlotIcon />
+                            {`${area} m²`}
+                        </CardDescription>
+                    </CardContent>
+                    <CardFooter className="flex w-full justify-end">
+                        <Button id={`post-${id}-details`}>
+                            {STRINGS.VIEW_DETAILS}
+                        </Button>
+                    </CardFooter>
                 </div>
-            </li>
-        );
-    },
-);
+            </div>
+        </Card>
+    );
+};

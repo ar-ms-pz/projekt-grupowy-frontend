@@ -1,8 +1,4 @@
-import {
-    InfiniteData,
-    QueryKey,
-    useSuspenseInfiniteQuery,
-} from '@tanstack/react-query';
+import { QueryKey, useSuspenseQuery } from '@tanstack/react-query';
 import { QueryKeys } from '../query-keys';
 import { DEFAULT_LIMIT } from '../../config';
 import { Endpoints } from '../endpoints';
@@ -10,42 +6,65 @@ import { PaginatedResponse } from '../models/response';
 import { Post } from '../models/post';
 import { callApi } from '../call-api';
 import { FetchError } from '../fetch-error';
+import { useSearch } from '@tanstack/react-router';
+import { useMemo } from 'react';
+import { getFiltersSearchParams } from '@/lib/get-search-url-params';
+import { useRetrieveAddress } from '../address/use-retrive-address';
 
-interface Params {
-    offset?: number;
-    limit?: number;
-    userId?: number;
-}
+export const usePosts = () => {
+    const { data: address } = useRetrieveAddress();
 
-export const usePosts = ({
-    offset = 0,
-    limit = DEFAULT_LIMIT,
-    userId,
-}: Params) => {
-    return useSuspenseInfiniteQuery<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const params: Record<string, any> = useSearch({
+        from: '/search',
+    });
+
+    const parsedParams = useMemo(() => {
+        const { distance: rawDistance, ...queryParams } =
+            getFiltersSearchParams(params);
+
+        const { latitude, longitude } = address?.geometry.coordinates
+            ? {
+                  latitude: address.geometry.coordinates[1],
+                  longitude: address.geometry.coordinates[0],
+              }
+            : {};
+
+        const distance = rawDistance ? Number(rawDistance) * 1000 : undefined;
+
+        return {
+            ...queryParams,
+            distance: distance && latitude && longitude ? distance : undefined,
+            longitude: distance && longitude ? longitude : undefined,
+            latitude: distance && latitude ? latitude : undefined,
+        };
+    }, [params, address]);
+
+    const paramsPage = (params as { page: unknown }).page;
+
+    const page =
+        !isNaN(Number(paramsPage)) &&
+        Number(paramsPage) > 0 &&
+        Number(paramsPage) % 1 === 0
+            ? Number(paramsPage)
+            : 1;
+
+    return useSuspenseQuery<
         PaginatedResponse<Post>,
         FetchError,
-        InfiniteData<PaginatedResponse<Post>>,
-        QueryKey,
-        number
+        PaginatedResponse<Post>,
+        QueryKey
     >({
-        queryKey: [QueryKeys.POSTS, userId, offset, limit],
-        queryFn: async ({ signal, pageParam }) => {
+        queryKey: [QueryKeys.POSTS, params.mapboxId, parsedParams, page],
+        queryFn: async ({ signal }) => {
             return callApi(Endpoints.POSTS, {
                 signal,
                 query: {
-                    offset: pageParam.toString(),
-                    limit: limit.toString(),
-                    userId: userId?.toString(),
+                    offset: DEFAULT_LIMIT * (page - 1),
+                    limit: DEFAULT_LIMIT,
+                    ...parsedParams,
                 },
             });
         },
-        getNextPageParam: (lastPage) => {
-            const newParam = lastPage.info.offset + lastPage.info.limit;
-            if (lastPage.info.total <= newParam) return null;
-
-            return lastPage.info.offset + lastPage.info.limit;
-        },
-        initialPageParam: offset,
     });
 };

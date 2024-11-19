@@ -14,4 +14,11 @@ export const Endpoints = {
     SET_LIKE: '/posts/[id]/set-like',
 } as const;
 
-export type Endpoint = (typeof Endpoints)[keyof typeof Endpoints];
+export const MapboxEndpoints = {
+    SUGGEST: '/search/searchbox/v1/suggest',
+    RETRIEVE: '/search/searchbox/v1/retrieve/[id]',
+} as const;
+
+export type Endpoint =
+    | (typeof Endpoints)[keyof typeof Endpoints]
+    | (typeof MapboxEndpoints)[keyof typeof MapboxEndpoints];

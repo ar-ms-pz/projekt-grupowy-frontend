@@ -17,10 +17,12 @@ interface RequestOptions {
         [key: string]: string | undefined;
     };
     query?: {
-        [key: string]: string | string[] | undefined;
+        [key: string]: string | string[] | number | undefined;
     };
     signal?: AbortSignal;
     token?: string;
+    baseUrl?: string;
+    credentials?: 'include' | 'omit';
 }
 
 const HEADERS_CONFIG = {
@@ -29,7 +31,16 @@ const HEADERS_CONFIG = {
 
 export const callApi = async (
     endpoint: Endpoint,
-    { body, headers, method = 'GET', params, query, signal }: RequestOptions,
+    {
+        body,
+        headers,
+        method = 'GET',
+        params,
+        query,
+        signal,
+        baseUrl = API_URL,
+        credentials = 'include',
+    }: RequestOptions,
 ) => {
     if (method === 'GET' && body) {
         throw new Error('GET requests cannot have a body');
@@ -50,7 +61,7 @@ export const callApi = async (
 
     // Build query string
     const queryString = queryEntries.reduce((prev, curr, i) => {
-        if (!curr[1]) {
+        if (curr[1] == null) {
             return prev;
         }
         // Array are processed as multiple occurrences of the same key
@@ -77,7 +88,7 @@ export const callApi = async (
             : endpoint;
 
     const url = encodeURI(
-        `${API_URL}${parsedPathname}${
+        `${baseUrl}${parsedPathname}${
             queryString && queryString !== '?' ? queryString : ''
         }`,
     );
@@ -89,7 +100,7 @@ export const callApi = async (
                     ? JSON.stringify(body)
                     : body,
             headers: reqHeaders,
-            credentials: 'include',
+            credentials,
             signal,
             method,
         });

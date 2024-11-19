@@ -24,6 +24,7 @@ interface Props {
 const STRINGS = {
     SIGN_OUT: 'Sign out',
     MY_POSTS: 'My Posts',
+    ADMIN_PANEL: 'Admin Panel',
 };
 
 export const UserNav = ({ user }: Props) => {
@@ -70,6 +71,12 @@ export const UserNav = ({ user }: Props) => {
                         {STRINGS.MY_POSTS}
                         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                     </DropdownMenuItem>
+                    {user.type === 'ADMIN' && (
+                        <DropdownMenuItem>
+                            {STRINGS.ADMIN_PANEL}
+                            <DropdownMenuShortcut>⇧⌘A</DropdownMenuShortcut>
+                        </DropdownMenuItem>
+                    )}
                     <ThemeRadioGroup />
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
