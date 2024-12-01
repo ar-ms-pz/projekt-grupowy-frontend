@@ -1,48 +1,27 @@
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
+import { Pagination } from '@/components/pagination';
 import { usePosts } from '../../../api/posts/use-posts';
 import { PostList } from '../../../components/post-list/post-list';
+import { useSearch } from '@tanstack/react-router';
 
 export const PostsConnector = () => {
     const { data } = usePosts();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const params: Record<string, any> = useSearch({
+        from: '/search',
+    });
+
+    const totalPages = Math.ceil(data.info.total / data.info.limit);
+    const currentPage = Math.ceil(data.info.offset / data.info.limit) + 1;
 
     return (
         <div className="pb-4">
             <PostList posts={data.data} />
-            <Pagination>
-                <PaginationContent>
-                    <PaginationItem>
-                        <PaginationPrevious href="/search" />
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink href="#">1</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink href="#" isActive>
-                            2
-                        </PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink href="#">3</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationEllipsis />
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationLink href="#">5</PaginationLink>
-                    </PaginationItem>
-                    <PaginationItem>
-                        <PaginationNext href="/search" />
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
+            <Pagination
+                totalPages={totalPages}
+                currentPage={currentPage}
+                linkTo="/search"
+                linkSearch={params}
+            />
         </div>
     );
 };

@@ -2,7 +2,7 @@ import { User } from '../../../api/models/user';
 import { getInitials } from '../../../utils/getInitials';
 import { capitalize } from '../../../utils/capitalize';
 import { useAuth } from '../../../hooks/use-auth';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -72,9 +72,11 @@ export const UserNav = ({ user }: Props) => {
                         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                     </DropdownMenuItem>
                     {user.type === 'ADMIN' && (
-                        <DropdownMenuItem>
-                            {STRINGS.ADMIN_PANEL}
-                            <DropdownMenuShortcut>⇧⌘A</DropdownMenuShortcut>
+                        <DropdownMenuItem asChild>
+                            <Link to="/admin">
+                                {STRINGS.ADMIN_PANEL}
+                                <DropdownMenuShortcut>⇧⌘A</DropdownMenuShortcut>
+                            </Link>
                         </DropdownMenuItem>
                     )}
                     <ThemeRadioGroup />

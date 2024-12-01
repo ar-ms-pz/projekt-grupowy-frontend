@@ -188,8 +188,8 @@ export const FilterPanel = () => {
                             onSubmit={form.handleSubmit(onSubmit)}
                             className="flex flex-col gap-4 pt-4 px-2"
                         >
-                            <div className="flex gap-4 items-center w-full">
-                                <div className="flex gap-2 flex-col">
+                            <div className="flex flex-col gap-4 items-center w-full sm:flex-row">
+                                <div className="flex gap-2 flex-col w-full sm:w-auto">
                                     <FormLabel>{STRINGS.TYPE}</FormLabel>
                                     <FormField
                                         control={form.control}
@@ -203,7 +203,7 @@ export const FilterPanel = () => {
                                                     defaultValue={field.value}
                                                     autoComplete="off"
                                                 >
-                                                    <SelectTrigger className="w-[180px]">
+                                                    <SelectTrigger className="sm:w-[180px]">
                                                         <SelectValue
                                                             placeholder={
                                                                 STRINGS.SELECT_TYPE
@@ -226,7 +226,7 @@ export const FilterPanel = () => {
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-2 flex-1">
+                                <div className="flex flex-col gap-2 flex-1 w-full sm:w-auto">
                                     <FormLabel>{STRINGS.PRICE}</FormLabel>
                                     <div className="flex gap-4">
                                         <FormField
@@ -275,8 +275,8 @@ export const FilterPanel = () => {
                                 </div>
                             </div>
 
-                            <div className="flex gap-4 flex-1">
-                                <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-4 flex-1 sm:flex-row">
+                                <div className="flex flex-col gap-2 flex-1">
                                     <FormLabel>{STRINGS.AREA}</FormLabel>
                                     <div className="flex gap-4">
                                         <FormField
@@ -285,7 +285,7 @@ export const FilterPanel = () => {
                                             render={({
                                                 field: { onChange, ...field },
                                             }) => (
-                                                <FormItem>
+                                                <FormItem className="flex-1">
                                                     <NumberInput
                                                         min={0}
                                                         unit={STRINGS.M2}
@@ -306,7 +306,7 @@ export const FilterPanel = () => {
                                             render={({
                                                 field: { onChange, ...field },
                                             }) => (
-                                                <FormItem>
+                                                <FormItem className="flex-1">
                                                     <NumberInput
                                                         min={0}
                                                         unit={STRINGS.M2}
@@ -323,7 +323,7 @@ export const FilterPanel = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="flex flex-col gap-2">
+                                <div className="flex flex-col gap-2 flex-1">
                                     <FormLabel>{STRINGS.ROOMS}</FormLabel>
                                     <div className="flex gap-4">
                                         <FormField
@@ -332,7 +332,7 @@ export const FilterPanel = () => {
                                             render={({
                                                 field: { onChange, ...field },
                                             }) => (
-                                                <FormItem>
+                                                <FormItem className="flex-1">
                                                     <NumberInput
                                                         min={0}
                                                         placeholder={
@@ -351,7 +351,7 @@ export const FilterPanel = () => {
                                             render={({
                                                 field: { onChange, ...field },
                                             }) => (
-                                                <FormItem>
+                                                <FormItem className="flex-1">
                                                     <NumberInput
                                                         min={0}
                                                         placeholder={

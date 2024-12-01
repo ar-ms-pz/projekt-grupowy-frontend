@@ -3,6 +3,7 @@ import { PostListItem } from './item/post-list-item';
 
 interface Props {
     posts: Post[];
+    displayMode?: 'status' | 'favorite';
 }
 
 // const STRINGS = {
@@ -47,11 +48,15 @@ interface Props {
 //     );
 // };
 
-export const PostList = ({ posts }: Props) => {
+export const PostList = ({ posts, displayMode = 'favorite' }: Props) => {
     return (
         <ul className="flex flex-col gap-6 w-full h-full pt-6">
             {posts.map((post) => (
-                <PostListItem key={post.id} {...post} />
+                <PostListItem
+                    key={post.id}
+                    {...post}
+                    displayMode={displayMode}
+                />
             ))}
             <div className="w-full pb-1" />
         </ul>

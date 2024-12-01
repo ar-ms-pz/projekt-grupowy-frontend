@@ -25,9 +25,6 @@ const STRINGS = {
     SIGN_IN: 'Sign in',
     CREATE_AN_ACCOUNT: 'Create an account',
     INTERNAL_SERVER_ERROR: 'An unknown error occurred. Please try again later',
-    QUOTE_CONTENT:
-        'Thanks to the money this service saved me, now I can afford to repeat one more course.',
-    QUOTE_AUTHOR: 'Anonymous Gdansk University of Technology student',
     USERNAME: 'Username',
     PASSWORD: 'Password',
     CONFIRM_PASSWORD: 'Confirm password',
@@ -131,17 +128,6 @@ export const SignUpPage = () => {
             <div className="bg-muted relative hidden lg:block">
                 <div className="relative z-20 flex items-center py-4 px-12">
                     <Logo />
-                </div>
-
-                <div className="absolute z-20 bottom-0 left-0 flex flex-col items-center w-full p-12">
-                    <blockquote className="space-y-2">
-                        <p className="text-lg">
-                            &ldquo;{STRINGS.QUOTE_CONTENT}&rdquo;
-                        </p>
-                        <footer className="text-sm">
-                            {STRINGS.QUOTE_AUTHOR}
-                        </footer>
-                    </blockquote>
                 </div>
             </div>
 

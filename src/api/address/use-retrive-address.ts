@@ -25,9 +25,12 @@ export const useRetrieveAddress = () => {
     const { mapboxId }: Record<string, any> = useSearch({
         from: '/search',
     });
+
     return useQuery<SearchAddressResponse, FetchError>({
-        queryKey: [QueryKeys.ADDRESS, mapboxId],
+        queryKey: [QueryKeys.SEARCH_ADDRESS, mapboxId],
         queryFn: async ({ signal }) => {
+            if (!mapboxId) return null;
+
             const response = await callApi(MapboxEndpoints.RETRIEVE, {
                 signal,
                 baseUrl: MAPBOX_BASE_URL,
@@ -48,7 +51,5 @@ export const useRetrieveAddress = () => {
 
             return response.features[0];
         },
-        staleTime: Infinity,
-        enabled: !!mapboxId,
     });
 };

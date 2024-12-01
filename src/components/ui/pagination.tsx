@@ -6,7 +6,7 @@ import {
     ChevronRightIcon,
     DotsHorizontalIcon,
 } from '@radix-ui/react-icons';
-import { Link } from '@tanstack/react-router';
+import { Link, LinkProps } from '@tanstack/react-router';
 
 const Pagination = ({ className, ...props }: React.ComponentProps<'nav'>) => (
     <nav
@@ -40,8 +40,9 @@ PaginationItem.displayName = 'PaginationItem';
 
 type PaginationLinkProps = {
     isActive?: boolean;
+    className?: string;
 } & Pick<ButtonProps, 'size'> &
-    React.ComponentProps<'a'>;
+    LinkProps;
 
 const PaginationLink = ({
     className,

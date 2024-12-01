@@ -32,11 +32,14 @@ export const usePosts = () => {
 
         const distance = rawDistance ? Number(rawDistance) * 1000 : undefined;
 
+        const shouldUseDistance =
+            !!params.mapboxId && distance && latitude && longitude;
+
         return {
             ...queryParams,
-            distance: distance && latitude && longitude ? distance : undefined,
-            longitude: distance && longitude ? longitude : undefined,
-            latitude: distance && latitude ? latitude : undefined,
+            distance: shouldUseDistance ? distance : undefined,
+            longitude: shouldUseDistance ? longitude : undefined,
+            latitude: shouldUseDistance ? latitude : undefined,
         };
     }, [params, address]);
 

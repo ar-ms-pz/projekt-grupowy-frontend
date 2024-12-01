@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { WallLayout } from '../../layouts/wall/wall-layout';
 import { PostsConnector } from './connectors/posts-connector';
 import { Loader } from '../../components/loader/loader';
@@ -46,7 +46,7 @@ export const SearchPage = () => {
                             </div>
                             <Suspense
                                 fallback={
-                                    <div>
+                                    <div className="w-full h-[calc(100vh-8.25rem)] flex justify-center items-center">
                                         <Loader />
                                     </div>
                                 }

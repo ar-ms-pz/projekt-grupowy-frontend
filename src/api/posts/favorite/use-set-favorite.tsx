@@ -1,8 +1,4 @@
-import {
-    useMutation,
-    useQueryClient,
-    InfiniteData,
-} from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Response } from '../../models/response';
 import { callApi } from '../../call-api';
 import { Endpoints } from '../../endpoints';
@@ -10,7 +6,7 @@ import { QueryKeys } from '../../query-keys';
 import { Post } from '../../models/post';
 import { toast } from 'react-toastify';
 import { FetchError } from '../../fetch-error';
-import { Like } from '../../models/like';
+import { Favorite } from '../../models/favorite';
 import { ErrorCodes } from '../../error-codes';
 import { Toast } from '../../../components/toast/toast';
 import { getErrorText } from '../../../helpers/get-error-text';
@@ -20,17 +16,17 @@ interface Params {
 }
 
 interface Variables {
-    like: boolean;
+    favorite: boolean;
 }
 
-export const useSetLike = ({ id }: Params) => {
+export const useSetFavorite = ({ id }: Params) => {
     const queryClient = useQueryClient();
 
-    return useMutation<Response<Like>, FetchError, Variables>({
-        mutationFn: async ({ like }) => {
-            return callApi(Endpoints.SET_LIKE, {
+    return useMutation<Response<Favorite>, FetchError, Variables>({
+        mutationFn: async ({ favorite }) => {
+            return callApi(Endpoints.SET_FAVORITE, {
                 method: 'POST',
-                body: { like },
+                body: { favorite },
                 params: { id: `${id}` },
             });
         },
@@ -44,47 +40,42 @@ export const useSetLike = ({ id }: Params) => {
                         ...oldData,
                         data: {
                             ...oldData.data,
-                            isLiked: variables.like,
-                            likes:
-                                oldData.data.likes + (variables.like ? 1 : -1),
+                            isFavorite: variables.favorite,
+                            favorites:
+                                oldData.data.favorites +
+                                (variables.favorite ? 1 : -1),
                         },
                     };
                 },
             );
 
-            queryClient.setQueriesData<InfiniteData<Response<Post[]>>>(
+            queryClient.setQueriesData<Response<Post[]>>(
                 { queryKey: [QueryKeys.POSTS] },
                 (oldData) => {
                     if (!oldData) return oldData;
 
-                    const newPages = oldData.pages.map((page) => {
-                        const newPosts = page.data.map((post) => {
-                            if (post.id !== id) return post;
-
-                            return {
-                                ...post,
-                                isLiked: variables.like,
-                                likes: post.likes + (variables.like ? 1 : -1),
-                            };
-                        });
+                    const newPosts = oldData.data.map((post) => {
+                        if (post.id !== id) return post;
 
                         return {
-                            ...page,
-                            data: newPosts,
+                            ...post,
+                            isFavorite: variables.favorite,
+                            favorites:
+                                post.favorites + (variables.favorite ? 1 : -1),
                         };
                     });
 
                     return {
                         ...oldData,
-                        pages: newPages,
+                        data: newPosts,
                     };
                 },
             );
         },
         onError: (error, variables) => {
-            const title = variables.like
-                ? 'Could not like post'
-                : 'Could not remove like';
+            const title = variables.favorite
+                ? 'Could not add post to favorites'
+                : 'Could not remove post from favorites';
 
             const errorCode =
                 error.errors[0]?.code ?? ErrorCodes.INTERNAL_SERVER_ERROR;

@@ -11,7 +11,7 @@ import { Heart, Pencil, Trash2, X } from 'lucide-react';
 import { EditPostModal } from '../post-modal/edit-post-modal';
 import { DeletePostModal } from '../post-modal/delete-post-modal';
 import { useUserContext } from '../../context/user-context';
-import { useSetLike } from '../../api/posts/like/use-set-like';
+import { useSetLike } from '../../api/posts/favorite/use-set-favorite';
 
 type Props = {
     id: number;

@@ -4,7 +4,11 @@ const ALLOWED_TYPE_OPTIONS = ['SALE', 'RENTAL'];
 
 export const getFiltersSearchParams = (
     searchParams: Record<string, unknown>,
-): PostSearchFormModel & { distance?: number; mapboxId?: string } => {
+): PostSearchFormModel & {
+    distance?: number;
+    mapboxId?: string;
+    page?: number;
+} => {
     const {
         type,
         minArea,
@@ -14,6 +18,7 @@ export const getFiltersSearchParams = (
         search,
         distance,
         mapboxId,
+        page,
     } = searchParams;
 
     const newType = ALLOWED_TYPE_OPTIONS.includes(type as string)
@@ -38,6 +43,9 @@ export const getFiltersSearchParams = (
             : undefined;
     const newDistance = mapboxId ? Number(distance || 1) : undefined;
 
+    const newPage =
+        !isNaN(Number(page)) && Number(page) >= 0 ? Number(page) : undefined;
+
     const shouldAddMaxPrice =
         newMinPrice !== undefined &&
         newMaxPrice !== undefined &&
@@ -57,5 +65,6 @@ export const getFiltersSearchParams = (
         search: (search as string) || undefined,
         distance: newDistance,
         mapboxId: (mapboxId as string) || undefined,
+        page: newPage,
     };
 };

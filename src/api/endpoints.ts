@@ -2,6 +2,7 @@ export const Endpoints = {
     POSTS: '/posts',
     POST: '/posts/[id]',
 
+    USERS: '/users',
     USER: '/users/[id]',
 
     LOGIN: '/auth/login',
@@ -11,7 +12,7 @@ export const Endpoints = {
 
     WHO_AM_I: '/who-am-i',
 
-    SET_LIKE: '/posts/[id]/set-like',
+    SET_FAVORITE: '/posts/[id]/set-favorite',
 } as const;
 
 export const MapboxEndpoints = {

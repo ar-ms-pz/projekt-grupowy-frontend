@@ -1,4 +1,4 @@
-export interface Like {
+export interface Favorite {
     id: number;
     postId: number;
     userId: number;

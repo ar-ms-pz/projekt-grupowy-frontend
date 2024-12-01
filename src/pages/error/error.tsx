@@ -11,8 +11,11 @@ const STRINGS = {
 };
 
 export const ErrorPage = ({ error }: ErrorComponentProps) => {
-    if (error instanceof FetchError) {
-        const messages = error.errors.map((err) => getErrorText(err.code));
+    if (error instanceof FetchError || error instanceof Response) {
+        const messages =
+            error instanceof FetchError
+                ? error.errors.map((err) => getErrorText(err.code))
+                : [error.statusText];
 
         return (
             <div className={$.container}>

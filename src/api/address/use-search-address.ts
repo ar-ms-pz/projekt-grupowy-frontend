@@ -40,7 +40,7 @@ const SEATCH_TYPES = [
 
 export const useSearchAddress = ({ search }: Params) => {
     return useQuery<SearchAddressResponse, FetchError>({
-        queryKey: [QueryKeys.ADDRESS, search],
+        queryKey: [QueryKeys.RETRIEVE_ADDRESS, search],
         queryFn: async ({ signal }) => {
             return callApi(MapboxEndpoints.SUGGEST, {
                 signal,

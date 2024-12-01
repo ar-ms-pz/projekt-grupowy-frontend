@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import {
     Select,
     SelectContent,
@@ -27,6 +27,7 @@ const STRINGS = {
     ADDRESS: 'Enter Address...',
     DISTANCE: 'Distance',
     ENTER_AT_LEAST_3_CHARACTERS: 'Please enter at least 3 characters',
+    NO_RESULTS: 'No results found',
 };
 
 const DISTANCE_STEPS = ['1', '5', '10', '15', '20', '30', '50', '100'] as const;
@@ -39,6 +40,8 @@ export const AddressSearch = () => {
     const { data, isLoading } = useSearchAddress({ search });
     const { data: addressData, isFetching: isFetchingAddress } =
         useRetrieveAddress();
+
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const [isMounted, setIsMounted] = useState(false);
 
@@ -63,12 +66,14 @@ export const AddressSearch = () => {
                 },
             });
         } else {
-            delete queryParams.mapboxId;
+            const paramsCopy = { ...queryParams, mapboxId: undefined };
+
             navigate({
                 to: '/search',
-                search: queryParams,
+                search: paramsCopy,
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate, queryParams, selectedValue]);
 
     useEffect(() => {
@@ -120,14 +125,30 @@ export const AddressSearch = () => {
                     </div>
                 ) : (
                     <Popover open={isOpen} onOpenChange={setIsOpen}>
-                        <PopoverTrigger className="flex-1">
+                        <PopoverTrigger
+                            className="flex-1"
+                            onKeyDown={(e) => {
+                                if (e.key !== ' ') return;
+
+                                e.preventDefault();
+
+                                if (inputRef.current?.value == null) return;
+
+                                inputRef.current.value =
+                                    inputRef.current.value + ' ';
+
+                                onSearch({
+                                    target: { value: inputRef.current.value },
+                                } as ChangeEvent<HTMLInputElement>);
+                            }}
+                        >
                             <div className="w-full relative">
                                 <Input
                                     autoComplete="off"
                                     placeholder={STRINGS.ADDRESS}
-                                    // {...field}
                                     onChange={onSearch}
                                     className="pr-9"
+                                    ref={inputRef}
                                 />
                                 <div className="absolute right-0 top-0 p-2">
                                     <MagnifyingGlassIcon className="size-5" />
@@ -156,28 +177,34 @@ export const AddressSearch = () => {
                             )}
                             {search.length > 2 &&
                                 !isLoading &&
-                                data?.suggestions.map((suggestion) => (
-                                    <Button
-                                        variant="ghost"
-                                        key={suggestion.mapbox_id}
-                                        value={suggestion.mapbox_id}
-                                        className="w-full h-auto max-w-full rounded-none"
-                                        onClick={() => {
-                                            setSelectedValue(suggestion);
-                                            setSearch('');
-                                            setIsOpen(false);
-                                        }}
-                                    >
-                                        <div className="flex items-start flex-col w-[calc(100%-3.5rem)] flex-1">
-                                            <div className="truncate w-full text-left">
-                                                {suggestion.name}
+                                (data?.suggestions.length !== 0 ? (
+                                    data?.suggestions.map((suggestion) => (
+                                        <Button
+                                            variant="ghost"
+                                            key={suggestion.mapbox_id}
+                                            value={suggestion.mapbox_id}
+                                            className="w-full h-auto max-w-full rounded-none"
+                                            onClick={() => {
+                                                setSelectedValue(suggestion);
+                                                setSearch('');
+                                                setIsOpen(false);
+                                            }}
+                                        >
+                                            <div className="flex items-start flex-col w-[calc(100%-3.5rem)] flex-1">
+                                                <div className="truncate w-full text-left">
+                                                    {suggestion.name}
+                                                </div>
+                                                <div className="truncate w-full text-left font-light">
+                                                    {suggestion.full_address ??
+                                                        suggestion.place_formatted}
+                                                </div>
                                             </div>
-                                            <div className="truncate w-full text-left font-light">
-                                                {suggestion.full_address ??
-                                                    suggestion.place_formatted}
-                                            </div>
-                                        </div>
-                                    </Button>
+                                        </Button>
+                                    ))
+                                ) : (
+                                    <div className="text-center p-2">
+                                        {STRINGS.NO_RESULTS}
+                                    </div>
                                 ))}
                         </PopoverContent>
                     </Popover>

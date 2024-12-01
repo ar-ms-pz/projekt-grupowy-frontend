@@ -17,11 +17,20 @@ import {
 } from '@/components/ui/carousel';
 import { useEffect, useState } from 'react';
 import { getImageUrl } from '@/utils/getImageUrl';
-import { BoxIcon, LandPlotIcon, MapPinIcon, ReceiptIcon } from 'lucide-react';
+import {
+    BoxIcon,
+    HeartIcon,
+    ImageOff,
+    LandPlotIcon,
+    MapPinIcon,
+    ReceiptIcon,
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { capitalize } from '@/utils/capitalize';
 import { Button } from '@/components/ui/button';
-import { CameraIcon } from '@radix-ui/react-icons';
+import { CameraIcon, HeartFilledIcon } from '@radix-ui/react-icons';
+import { useUserContext } from '@/context/user-context';
+import { useSetFavorite } from '@/api/posts/favorite/use-set-favorite';
 
 const STRINGS = {
     PER_MONTH: 'per month',
@@ -55,6 +64,10 @@ const formatPricePerMeter = (price: number, area: number) => {
     })}/m²`;
 };
 
+type Props = {
+    displayMode?: 'status' | 'favorite';
+} & Post;
+
 export const PostListItem = ({
     id,
     title,
@@ -65,10 +78,14 @@ export const PostListItem = ({
     rooms,
     area,
     status,
-}: Post) => {
+    isFavorite,
+    displayMode = 'favorite',
+}: Props) => {
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
     const [count, setCount] = useState(0);
+    const user = useUserContext();
+    const { mutateAsync: setFavoriteMutateAsync } = useSetFavorite({ id });
 
     useEffect(() => {
         if (!api) {
@@ -85,48 +102,74 @@ export const PostListItem = ({
 
     return (
         <Card>
-            <div className="flex">
+            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row">
                 <div className="basis-2/5">
-                    <Carousel
-                        setApi={setApi}
-                        className=" rounded-l-xl overflow-hidden h-full"
-                    >
-                        <CarouselContent className="h-full">
-                            {images.map((image, index) => (
-                                <CarouselItem key={index}>
-                                    <img
-                                        className="h-full object-cover"
-                                        src={getImageUrl(image.url)}
-                                        alt={title}
-                                    />
-                                </CarouselItem>
-                            ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="left-4" />
-                        <CarouselNext className="right-4" />
-                        <Badge
-                            variant="secondary"
-                            className="absolute bottom-4 right-4 flex gap-2"
+                    {images.length > 0 ? (
+                        <Carousel
+                            setApi={setApi}
+                            className="rounded-t-xl lg:rounded-l-xl overflow-hidden h-full"
                         >
-                            <CameraIcon />
-                            {current} {STRINGS.OF} {count}
-                        </Badge>
-                    </Carousel>
+                            <CarouselContent className="h-full">
+                                {images.map((image, index) => (
+                                    <CarouselItem key={index}>
+                                        <img
+                                            className="h-full object-cover"
+                                            src={getImageUrl(image.url)}
+                                            alt={title}
+                                        />
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                            <CarouselPrevious className="left-4" />
+                            <CarouselNext className="right-4" />
+                            <Badge
+                                variant="secondary"
+                                className="absolute bottom-4 right-4 flex gap-2"
+                            >
+                                <CameraIcon />
+                                {current} {STRINGS.OF} {count}
+                            </Badge>
+                        </Carousel>
+                    ) : (
+                        <div className="flex h-full w-full items-center justify-center border-r aspect-[4/3]">
+                            <ImageOff className="h-12 w-full text-muted-foreground" />
+                        </div>
+                    )}
                 </div>
 
-                <div className="flex-1">
+                <div className="flex-1 flex flex-col shrink">
                     <CardHeader className="pb-4">
                         <CardTitle className="justify-between flex w-full">
                             <div className="text-2xl font-semibold tracking-tight">
                                 {formatPrice(price, type)}
                             </div>
-                            <Badge
-                                className="max-h-6"
-                                /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-                                variant={status.toLowerCase() as any}
-                            >
-                                {capitalize(status)}
-                            </Badge>
+                            {displayMode === 'status' ? (
+                                <Badge
+                                    className="max-h-6"
+                                    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+                                    variant={status.toLowerCase() as any}
+                                >
+                                    {capitalize(status)}
+                                </Badge>
+                            ) : (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="[&_svg]:size-5"
+                                    disabled={!user}
+                                    onClick={() =>
+                                        setFavoriteMutateAsync({
+                                            favorite: !isFavorite,
+                                        })
+                                    }
+                                >
+                                    {isFavorite ? (
+                                        <HeartFilledIcon />
+                                    ) : (
+                                        <HeartIcon />
+                                    )}
+                                </Button>
+                            )}
                         </CardTitle>
                         <CardDescription className="text-foreground font-medium tracking-tight">
                             {title}
@@ -136,7 +179,7 @@ export const PostListItem = ({
                             {address}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="flex gap-4">
+                    <CardContent className="flex gap-4 flex-1 items-start">
                         <CardDescription className="flex items-center gap-2">
                             <BoxIcon />
                             {`${rooms} ${rooms === 1 ? STRINGS.ROOM : STRINGS.ROOMS}`}
