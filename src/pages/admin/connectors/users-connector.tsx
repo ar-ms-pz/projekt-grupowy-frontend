@@ -10,6 +10,11 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Pagination } from '@/components/pagination';
+import { EditUserDialog } from '@/components/edit-user-dialog';
+import { Button } from '@/components/ui/button';
+import { Pencil1Icon } from '@radix-ui/react-icons';
+import { DeleteUserDialog } from '@/components/delete-user-dialog';
+import { Trash2 } from 'lucide-react';
 
 const STRINGS = {
     ID: 'ID',
@@ -30,14 +35,12 @@ export const UsersConnector = () => {
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[100px]">
-                            {STRINGS.ID}
-                        </TableHead>
+                        <TableHead className="w-12">{STRINGS.ID}</TableHead>
                         <TableHead>{STRINGS.USERNAME}</TableHead>
                         <TableHead>{STRINGS.TYPE}</TableHead>
                         <TableHead>{STRINGS.CREATED}</TableHead>
                         <TableHead>{STRINGS.UPDATED}</TableHead>
-                        <TableHead />
+                        <TableHead className="w-24" />
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -53,7 +56,16 @@ export const UsersConnector = () => {
                                 <RelativeDate date={user.updatedAt} />
                             </TableCell>
                             <TableCell>
-                                <RelativeDate date={user.updatedAt} />
+                                <EditUserDialog userId={user.id}>
+                                    <Button size="icon" variant="ghost">
+                                        <Pencil1Icon />
+                                    </Button>
+                                </EditUserDialog>
+                                <DeleteUserDialog userId={user.id}>
+                                    <Button size="icon" variant="destructive">
+                                        <Trash2 />
+                                    </Button>
+                                </DeleteUserDialog>
                             </TableCell>
                         </TableRow>
                     ))}

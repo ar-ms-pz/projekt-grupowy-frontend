@@ -6,6 +6,7 @@ import { useExtendSession } from '../api/auth/use-extend-session';
 import { useLogout } from '../api/auth/use-logout';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys } from '../api/query-keys';
+import { useNavigate } from '@tanstack/react-router';
 
 interface ReturnValues {
     signIn: (username: string, password: string) => Promise<void>;
@@ -24,6 +25,7 @@ export const useAuth = (): ReturnValues => {
     const { mutateAsync: extendSessionMutateAsync } = useExtendSession();
     const { mutateAsync: logoutMutateAsync } = useLogout();
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const signIn = useCallback(
         async (username: string, password: string) => {
@@ -80,7 +82,8 @@ export const useAuth = (): ReturnValues => {
         queryClient.invalidateQueries({
             queryKey: [QueryKeys.WHO_AM_I],
         });
-    }, [logoutMutateAsync, queryClient]);
+        navigate({ to: '/' });
+    }, [logoutMutateAsync, queryClient, navigate]);
 
     useEffect(() => {
         const tokenExpiration = localStorage.getItem('token-expiration');

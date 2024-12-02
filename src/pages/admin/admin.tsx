@@ -8,6 +8,7 @@ import { ChangeEvent, Suspense } from 'react';
 import { debounce } from '@/utils/debounce';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Loader } from '@/components/loader/loader';
+import { AddUserDialog } from '@/components/add-user-dialog';
 
 const STRINGS = {
     ADMIN_PANEL: 'Admin Panel',
@@ -72,10 +73,12 @@ export const AdminPage = () => {
                         </div>
                     </div>
 
-                    <Button>
-                        {STRINGS.CREATE_USER}
-                        <PlusIcon />
-                    </Button>
+                    <AddUserDialog>
+                        <Button>
+                            {STRINGS.CREATE_USER}
+                            <PlusIcon />
+                        </Button>
+                    </AddUserDialog>
                 </div>
                 <Suspense
                     fallback={
