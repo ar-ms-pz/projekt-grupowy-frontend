@@ -4,15 +4,15 @@ import {
     useQueryClient,
 } from '@tanstack/react-query';
 import { Response } from '../models/response';
-import { Endpoints } from '../endpoints';
-import { callApi } from '../call-api';
+import { Endpoints } from '../helpers/endpoints';
+import { callApi } from '../helpers/call-api';
 import { Post } from '../models/post';
-import { QueryKeys } from '../query-keys';
+import { QueryKeys } from '../helpers/query-keys';
 import { toast } from 'react-toastify';
 import { Toast } from '../../components/toast/toast';
 import { getErrorText } from '../helpers/get-error-text';
-import { ErrorCodes } from '../error-codes';
-import { FetchError } from '../fetch-error';
+import { ErrorCodes } from '../helpers/error-codes';
+import { FetchError } from '../helpers/fetch-error';
 
 interface Params {
     id: number;

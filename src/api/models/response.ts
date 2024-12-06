@@ -1,4 +1,4 @@
-import { ErrorCode } from '../error-codes';
+import { ErrorCode } from '../helpers/error-codes';
 
 export interface ApiError {
     message: string;

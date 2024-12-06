@@ -1,4 +1,4 @@
-import { ApiError } from './models/response';
+import { ApiError } from '../models/response';
 
 export class FetchError extends Error {
     public isNotFound: boolean;

@@ -15,7 +15,7 @@ import {
 } from '../../../components/ui/alert';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
-import { FetchError } from '@/api/fetch-error';
+import { FetchError } from '@/api/helpers/fetch-error';
 import { getErrorText } from '@/api/helpers/get-error-text';
 import { useDeleteUser } from '@/api/users/use-delete-user';
 

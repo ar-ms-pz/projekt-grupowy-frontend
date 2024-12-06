@@ -1,11 +1,11 @@
 import { QueryKey, useSuspenseQuery } from '@tanstack/react-query';
-import { QueryKeys } from '../query-keys';
+import { QueryKeys } from '../helpers/query-keys';
 import { DEFAULT_LIMIT } from '../../config';
-import { Endpoints } from '../endpoints';
+import { Endpoints } from '../helpers/endpoints';
 import { PaginatedResponse } from '../models/response';
 import { Post } from '../models/post';
-import { callApi } from '../call-api';
-import { FetchError } from '../fetch-error';
+import { callApi } from '../helpers/call-api';
+import { FetchError } from '../helpers/fetch-error';
 import { useSearch } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import { getFiltersSearchParams } from '@/lib/get-search-url-params';

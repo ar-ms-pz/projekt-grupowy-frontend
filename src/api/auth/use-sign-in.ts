@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { Response } from '../models/response';
-import { Endpoints } from '../endpoints';
-import { callApi } from '../call-api';
+import { Endpoints } from '../helpers/endpoints';
+import { callApi } from '../helpers/call-api';
 import { User } from '../models/user';
-import { FetchError } from '../fetch-error';
+import { FetchError } from '../helpers/fetch-error';
 
 interface Variables {
     username: string;

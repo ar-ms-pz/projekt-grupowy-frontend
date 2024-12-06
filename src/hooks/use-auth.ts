@@ -5,7 +5,7 @@ import { useSignUp } from '../api/auth/use-sign-up';
 import { useExtendSession } from '../api/auth/use-extend-session';
 import { useLogout } from '../api/auth/use-logout';
 import { useQueryClient } from '@tanstack/react-query';
-import { QueryKeys } from '../api/query-keys';
+import { QueryKeys } from '../api/helpers/query-keys';
 import { useNavigate } from '@tanstack/react-router';
 
 interface ReturnValues {

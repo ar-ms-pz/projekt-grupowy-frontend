@@ -1,4 +1,4 @@
-import { API_URL } from '../config';
+import { API_URL } from '../../config';
 import type { Endpoint } from './endpoints';
 import { ErrorCodes } from './error-codes';
 import { FetchError } from './fetch-error';

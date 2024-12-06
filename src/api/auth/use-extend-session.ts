@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { Response } from '../models/response';
-import { Endpoints } from '../endpoints';
-import { callApi } from '../call-api';
-import { FetchError } from '../fetch-error';
+import { Endpoints } from '../helpers/endpoints';
+import { callApi } from '../helpers/call-api';
+import { FetchError } from '../helpers/fetch-error';
 
 export const useExtendSession = () => {
     return useMutation<Response<null>, FetchError>({

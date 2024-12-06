@@ -1,4 +1,4 @@
-import { FetchError } from '@/api/fetch-error';
+import { FetchError } from '@/api/helpers/fetch-error';
 import { Logo } from '@/components/logo';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';

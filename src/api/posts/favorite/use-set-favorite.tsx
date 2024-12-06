@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Response } from '../../models/response';
-import { callApi } from '../../call-api';
-import { Endpoints } from '../../endpoints';
-import { QueryKeys } from '../../query-keys';
+import { callApi } from '../../helpers/call-api';
+import { Endpoints } from '../../helpers/endpoints';
+import { QueryKeys } from '../../helpers/query-keys';
 import { Post } from '../../models/post';
-import { FetchError } from '../../fetch-error';
+import { FetchError } from '../../helpers/fetch-error';
 import { Favorite } from '../../models/favorite';
-import { ErrorCodes } from '../../error-codes';
+import { ErrorCodes } from '../../helpers/error-codes';
 import { getErrorText } from '../../helpers/get-error-text';
 import { useToast } from '@/hooks/use-toast';
 

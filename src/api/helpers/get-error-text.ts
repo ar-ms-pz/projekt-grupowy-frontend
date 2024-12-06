@@ -1,4 +1,4 @@
-import { ErrorCode, ErrorCodes } from '../error-codes';
+import { ErrorCode, ErrorCodes } from './error-codes';
 
 export const getErrorText = (code: ErrorCode) => {
     switch (code) {

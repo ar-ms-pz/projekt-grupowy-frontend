@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { QueryKeys } from '../query-keys';
-import { MapboxEndpoints } from '../endpoints';
+import { QueryKeys } from '../helpers/query-keys';
+import { MapboxEndpoints } from '../helpers/endpoints';
 
-import { callApi } from '../call-api';
-import { FetchError } from '../fetch-error';
+import { callApi } from '../helpers/call-api';
+import { FetchError } from '../helpers/fetch-error';
 import {
     MAPBOX_ACCESS_TOKEN,
     MAPBOX_BASE_URL,

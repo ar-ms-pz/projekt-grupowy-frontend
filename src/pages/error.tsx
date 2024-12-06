@@ -1,7 +1,7 @@
 import { ErrorComponentProps, Link } from '@tanstack/react-router';
-import { FetchError } from '../api/fetch-error';
+import { FetchError } from '../api/helpers/fetch-error';
 import { getErrorText } from '../api/helpers/get-error-text';
-import { ErrorCodes } from '../api/error-codes';
+import { ErrorCodes } from '../api/helpers/error-codes';
 import { Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/header/header';

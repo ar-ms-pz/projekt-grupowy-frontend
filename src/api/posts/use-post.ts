@@ -1,11 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { QueryKeys } from '../query-keys';
+import { QueryKeys } from '../helpers/query-keys';
 import { Response } from '../models/response';
 import { Post } from '../models/post';
-import { Endpoints } from '../endpoints';
+import { Endpoints } from '../helpers/endpoints';
 
-import { callApi } from '../call-api';
-import { FetchError } from '../fetch-error';
+import { callApi } from '../helpers/call-api';
+import { FetchError } from '../helpers/fetch-error';
 
 interface Params {
     id: number;

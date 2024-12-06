@@ -35,7 +35,7 @@ import {
 } from '../../../components/ui/select';
 import { useCreateUser } from '@/api/users/use-create-user';
 import { useState } from 'react';
-import { FetchError } from '@/api/fetch-error';
+import { FetchError } from '@/api/helpers/fetch-error';
 import { getErrorText } from '@/api/helpers/get-error-text';
 
 const STRINGS = {

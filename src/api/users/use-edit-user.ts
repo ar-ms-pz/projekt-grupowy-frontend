@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Response } from '../models/response';
-import { Endpoints } from '../endpoints';
-import { callApi } from '../call-api';
+import { Endpoints } from '../helpers/endpoints';
+import { callApi } from '../helpers/call-api';
 import { User } from '../models/user';
-import { FetchError } from '../fetch-error';
-import { QueryKeys } from '../query-keys';
+import { FetchError } from '../helpers/fetch-error';
+import { QueryKeys } from '../helpers/query-keys';
 import { useToast } from '@/hooks/use-toast';
 import { getErrorText } from '@/api/helpers/get-error-text';
 
