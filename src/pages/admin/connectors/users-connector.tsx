@@ -1,5 +1,5 @@
 import { useUsers } from '@/api/users/use-users';
-import { RelativeDate } from '@/components/relative-date/relative-date';
+import { RelativeDate } from '@/components/relative-date';
 import { capitalize } from '../../../utils/capitalize';
 import {
     Table,

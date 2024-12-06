@@ -3,7 +3,7 @@ import $ from './post.module.scss';
 import { Avatar } from '../avatar/avatar';
 import { getInitials } from '../../utils/getInitials';
 import { capitalize } from '../../utils/capitalize';
-import { RelativeDate } from '../relative-date/relative-date';
+import { RelativeDate } from '../relative-date';
 import { Button } from '../button/button';
 import { Dropdown, DropdownItem } from '../dropdown/dropdown';
 import { useMemo, useState } from 'react';
