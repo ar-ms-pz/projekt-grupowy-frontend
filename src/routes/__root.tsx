@@ -1,11 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRootRoute } from '@tanstack/react-router';
 import { Suspense } from 'react';
-import { GlobalLayout } from '../layouts/global/global-layout';
+import { GlobalLayout } from '../layouts/global';
 import { GlobalLoader } from '../components/global-loader/global-loader';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { NotFoundPage } from '../pages/not-found/not-found';
+import { NotFoundPage } from '../pages/not-found';
 import { ThemeProvider } from '@/components/theme-provider';
 
 const queryClient = new QueryClient();

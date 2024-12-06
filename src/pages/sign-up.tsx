@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useUserContext } from '@/context/user-context';
-import { getErrorText } from '@/helpers/get-error-text';
+import { getErrorText } from '@/api/helpers/get-error-text';
 import { useAuth } from '@/hooks/use-auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';

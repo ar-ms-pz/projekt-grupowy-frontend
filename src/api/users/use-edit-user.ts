@@ -5,6 +5,8 @@ import { callApi } from '../call-api';
 import { User } from '../models/user';
 import { FetchError } from '../fetch-error';
 import { QueryKeys } from '../query-keys';
+import { useToast } from '@/hooks/use-toast';
+import { getErrorText } from '@/api/helpers/get-error-text';
 
 interface Variables {
     userId: number;
@@ -14,6 +16,7 @@ interface Variables {
 
 export const useEditUser = () => {
     const queryClient = useQueryClient();
+    const { toast } = useToast();
 
     return useMutation<Response<User>, FetchError, Variables>({
         mutationFn: async ({ userId, password, type }) => {
@@ -34,6 +37,22 @@ export const useEditUser = () => {
             });
             queryClient.invalidateQueries({
                 queryKey: [QueryKeys.USER, variables.userId],
+            });
+
+            toast({
+                title: 'User updated',
+                description: 'The user has been updated successfully',
+            });
+        },
+
+        onError: (error) => {
+            const errorCode =
+                error.errors?.[0]?.code ?? 'INTERNAL_SERVER_ERROR';
+
+            toast({
+                title: 'Could not update user',
+                description: getErrorText(errorCode),
+                variant: 'destructive',
             });
         },
     });

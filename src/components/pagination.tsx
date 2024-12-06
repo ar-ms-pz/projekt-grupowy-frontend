@@ -8,11 +8,12 @@ import {
     PaginationPrevious,
     Pagination as PaginationPrimitive,
 } from './ui/pagination';
+import { FileRouteTypes } from '@/routeTree.gen';
 
 interface Props {
     currentPage: number;
     totalPages: number;
-    linkTo: string;
+    linkTo: FileRouteTypes['to'];
     linkParams?: Record<string, unknown>;
     linkSearch?: Record<string, unknown>;
     showBefore?: number;
@@ -87,8 +88,7 @@ export const Pagination = ({
                             <PaginationEllipsis />
                         ) : (
                             <PaginationLink
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                to={linkTo as any}
+                                to={linkTo}
                                 params={linkParams}
                                 search={{ ...linkSearch, page }}
                                 isActive={currentPage === page}
@@ -100,8 +100,7 @@ export const Pagination = ({
                 ))}
                 <PaginationItem>
                     <PaginationNext
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        to={linkTo as any}
+                        to={linkTo}
                         params={linkParams}
                         search={{
                             ...linkSearch,

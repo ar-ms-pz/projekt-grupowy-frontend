@@ -10,10 +10,10 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Pagination } from '@/components/pagination';
-import { EditUserDialog } from '@/components/edit-user-dialog';
+import { EditUserDialog } from '@/pages/admin/dialogs/edit-user-dialog';
 import { Button } from '@/components/ui/button';
 import { Pencil1Icon } from '@radix-ui/react-icons';
-import { DeleteUserDialog } from '@/components/delete-user-dialog';
+import { DeleteUserDialog } from '@/pages/admin/dialogs/delete-user-dialog';
 import { Trash2 } from 'lucide-react';
 
 const STRINGS = {
@@ -55,8 +55,11 @@ export const UsersConnector = () => {
                             <TableCell>
                                 <RelativeDate date={user.updatedAt} />
                             </TableCell>
-                            <TableCell>
-                                <EditUserDialog userId={user.id}>
+                            <TableCell className="flex gap-2">
+                                <EditUserDialog
+                                    userId={user.id}
+                                    userType={user.type}
+                                >
                                     <Button size="icon" variant="ghost">
                                         <Pencil1Icon />
                                     </Button>

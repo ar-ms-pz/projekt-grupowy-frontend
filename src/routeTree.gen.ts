@@ -8,213 +8,231 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router'
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root';
+import { Route as rootRoute } from './routes/__root'
+import { Route as MyPostsImport } from './routes/my-posts'
 
 // Create Virtual Routes
 
-const SignUpLazyImport = createFileRoute('/sign-up')();
-const SignInLazyImport = createFileRoute('/sign-in')();
-const SearchLazyImport = createFileRoute('/search')();
-const AdminLazyImport = createFileRoute('/admin')();
-const IndexLazyImport = createFileRoute('/')();
-const UsersUserIdLazyImport = createFileRoute('/users/$userId')();
-const PostsPostIdLazyImport = createFileRoute('/posts/$postId')();
+const SignUpLazyImport = createFileRoute('/sign-up')()
+const SignInLazyImport = createFileRoute('/sign-in')()
+const SearchLazyImport = createFileRoute('/search')()
+const AdminLazyImport = createFileRoute('/admin')()
+const IndexLazyImport = createFileRoute('/')()
+const UsersUserIdLazyImport = createFileRoute('/users/$userId')()
+const PostsPostIdLazyImport = createFileRoute('/posts/$postId')()
 
 // Create/Update Routes
 
 const SignUpLazyRoute = SignUpLazyImport.update({
-    id: '/sign-up',
-    path: '/sign-up',
-    getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/sign-up.lazy').then((d) => d.Route));
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/sign-up.lazy').then((d) => d.Route))
 
 const SignInLazyRoute = SignInLazyImport.update({
-    id: '/sign-in',
-    path: '/sign-in',
-    getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/sign-in.lazy').then((d) => d.Route));
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/sign-in.lazy').then((d) => d.Route))
 
 const SearchLazyRoute = SearchLazyImport.update({
-    id: '/search',
-    path: '/search',
-    getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/search.lazy').then((d) => d.Route));
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/search.lazy').then((d) => d.Route))
 
 const AdminLazyRoute = AdminLazyImport.update({
-    id: '/admin',
-    path: '/admin',
-    getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/admin.lazy').then((d) => d.Route));
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/admin.lazy').then((d) => d.Route))
+
+const MyPostsRoute = MyPostsImport.update({
+  id: '/my-posts',
+  path: '/my-posts',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexLazyRoute = IndexLazyImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route));
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
 const UsersUserIdLazyRoute = UsersUserIdLazyImport.update({
-    id: '/users/$userId',
-    path: '/users/$userId',
-    getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-    import('./routes/users/$userId.lazy').then((d) => d.Route),
-);
+  id: '/users/$userId',
+  path: '/users/$userId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/users/$userId.lazy').then((d) => d.Route))
 
 const PostsPostIdLazyRoute = PostsPostIdLazyImport.update({
-    id: '/posts/$postId',
-    path: '/posts/$postId',
-    getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-    import('./routes/posts/$postId.lazy').then((d) => d.Route),
-);
+  id: '/posts/$postId',
+  path: '/posts/$postId',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/posts/$postId.lazy').then((d) => d.Route))
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
-    interface FileRoutesByPath {
-        '/': {
-            id: '/';
-            path: '/';
-            fullPath: '/';
-            preLoaderRoute: typeof IndexLazyImport;
-            parentRoute: typeof rootRoute;
-        };
-        '/admin': {
-            id: '/admin';
-            path: '/admin';
-            fullPath: '/admin';
-            preLoaderRoute: typeof AdminLazyImport;
-            parentRoute: typeof rootRoute;
-        };
-        '/search': {
-            id: '/search';
-            path: '/search';
-            fullPath: '/search';
-            preLoaderRoute: typeof SearchLazyImport;
-            parentRoute: typeof rootRoute;
-        };
-        '/sign-in': {
-            id: '/sign-in';
-            path: '/sign-in';
-            fullPath: '/sign-in';
-            preLoaderRoute: typeof SignInLazyImport;
-            parentRoute: typeof rootRoute;
-        };
-        '/sign-up': {
-            id: '/sign-up';
-            path: '/sign-up';
-            fullPath: '/sign-up';
-            preLoaderRoute: typeof SignUpLazyImport;
-            parentRoute: typeof rootRoute;
-        };
-        '/posts/$postId': {
-            id: '/posts/$postId';
-            path: '/posts/$postId';
-            fullPath: '/posts/$postId';
-            preLoaderRoute: typeof PostsPostIdLazyImport;
-            parentRoute: typeof rootRoute;
-        };
-        '/users/$userId': {
-            id: '/users/$userId';
-            path: '/users/$userId';
-            fullPath: '/users/$userId';
-            preLoaderRoute: typeof UsersUserIdLazyImport;
-            parentRoute: typeof rootRoute;
-        };
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
     }
+    '/my-posts': {
+      id: '/my-posts'
+      path: '/my-posts'
+      fullPath: '/my-posts'
+      preLoaderRoute: typeof MyPostsImport
+      parentRoute: typeof rootRoute
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/sign-up': {
+      id: '/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/posts/$postId': {
+      id: '/posts/$postId'
+      path: '/posts/$postId'
+      fullPath: '/posts/$postId'
+      preLoaderRoute: typeof PostsPostIdLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/users/$userId': {
+      id: '/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof UsersUserIdLazyImport
+      parentRoute: typeof rootRoute
+    }
+  }
 }
 
 // Create and export the route tree
 
 export interface FileRoutesByFullPath {
-    '/': typeof IndexLazyRoute;
-    '/admin': typeof AdminLazyRoute;
-    '/search': typeof SearchLazyRoute;
-    '/sign-in': typeof SignInLazyRoute;
-    '/sign-up': typeof SignUpLazyRoute;
-    '/posts/$postId': typeof PostsPostIdLazyRoute;
-    '/users/$userId': typeof UsersUserIdLazyRoute;
+  '/': typeof IndexLazyRoute
+  '/my-posts': typeof MyPostsRoute
+  '/admin': typeof AdminLazyRoute
+  '/search': typeof SearchLazyRoute
+  '/sign-in': typeof SignInLazyRoute
+  '/sign-up': typeof SignUpLazyRoute
+  '/posts/$postId': typeof PostsPostIdLazyRoute
+  '/users/$userId': typeof UsersUserIdLazyRoute
 }
 
 export interface FileRoutesByTo {
-    '/': typeof IndexLazyRoute;
-    '/admin': typeof AdminLazyRoute;
-    '/search': typeof SearchLazyRoute;
-    '/sign-in': typeof SignInLazyRoute;
-    '/sign-up': typeof SignUpLazyRoute;
-    '/posts/$postId': typeof PostsPostIdLazyRoute;
-    '/users/$userId': typeof UsersUserIdLazyRoute;
+  '/': typeof IndexLazyRoute
+  '/my-posts': typeof MyPostsRoute
+  '/admin': typeof AdminLazyRoute
+  '/search': typeof SearchLazyRoute
+  '/sign-in': typeof SignInLazyRoute
+  '/sign-up': typeof SignUpLazyRoute
+  '/posts/$postId': typeof PostsPostIdLazyRoute
+  '/users/$userId': typeof UsersUserIdLazyRoute
 }
 
 export interface FileRoutesById {
-    __root__: typeof rootRoute;
-    '/': typeof IndexLazyRoute;
-    '/admin': typeof AdminLazyRoute;
-    '/search': typeof SearchLazyRoute;
-    '/sign-in': typeof SignInLazyRoute;
-    '/sign-up': typeof SignUpLazyRoute;
-    '/posts/$postId': typeof PostsPostIdLazyRoute;
-    '/users/$userId': typeof UsersUserIdLazyRoute;
+  __root__: typeof rootRoute
+  '/': typeof IndexLazyRoute
+  '/my-posts': typeof MyPostsRoute
+  '/admin': typeof AdminLazyRoute
+  '/search': typeof SearchLazyRoute
+  '/sign-in': typeof SignInLazyRoute
+  '/sign-up': typeof SignUpLazyRoute
+  '/posts/$postId': typeof PostsPostIdLazyRoute
+  '/users/$userId': typeof UsersUserIdLazyRoute
 }
 
 export interface FileRouteTypes {
-    fileRoutesByFullPath: FileRoutesByFullPath;
-    fullPaths:
-        | '/'
-        | '/admin'
-        | '/search'
-        | '/sign-in'
-        | '/sign-up'
-        | '/posts/$postId'
-        | '/users/$userId';
-    fileRoutesByTo: FileRoutesByTo;
-    to:
-        | '/'
-        | '/admin'
-        | '/search'
-        | '/sign-in'
-        | '/sign-up'
-        | '/posts/$postId'
-        | '/users/$userId';
-    id:
-        | '__root__'
-        | '/'
-        | '/admin'
-        | '/search'
-        | '/sign-in'
-        | '/sign-up'
-        | '/posts/$postId'
-        | '/users/$userId';
-    fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/my-posts'
+    | '/admin'
+    | '/search'
+    | '/sign-in'
+    | '/sign-up'
+    | '/posts/$postId'
+    | '/users/$userId'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/my-posts'
+    | '/admin'
+    | '/search'
+    | '/sign-in'
+    | '/sign-up'
+    | '/posts/$postId'
+    | '/users/$userId'
+  id:
+    | '__root__'
+    | '/'
+    | '/my-posts'
+    | '/admin'
+    | '/search'
+    | '/sign-in'
+    | '/sign-up'
+    | '/posts/$postId'
+    | '/users/$userId'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-    IndexLazyRoute: typeof IndexLazyRoute;
-    AdminLazyRoute: typeof AdminLazyRoute;
-    SearchLazyRoute: typeof SearchLazyRoute;
-    SignInLazyRoute: typeof SignInLazyRoute;
-    SignUpLazyRoute: typeof SignUpLazyRoute;
-    PostsPostIdLazyRoute: typeof PostsPostIdLazyRoute;
-    UsersUserIdLazyRoute: typeof UsersUserIdLazyRoute;
+  IndexLazyRoute: typeof IndexLazyRoute
+  MyPostsRoute: typeof MyPostsRoute
+  AdminLazyRoute: typeof AdminLazyRoute
+  SearchLazyRoute: typeof SearchLazyRoute
+  SignInLazyRoute: typeof SignInLazyRoute
+  SignUpLazyRoute: typeof SignUpLazyRoute
+  PostsPostIdLazyRoute: typeof PostsPostIdLazyRoute
+  UsersUserIdLazyRoute: typeof UsersUserIdLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-    IndexLazyRoute: IndexLazyRoute,
-    AdminLazyRoute: AdminLazyRoute,
-    SearchLazyRoute: SearchLazyRoute,
-    SignInLazyRoute: SignInLazyRoute,
-    SignUpLazyRoute: SignUpLazyRoute,
-    PostsPostIdLazyRoute: PostsPostIdLazyRoute,
-    UsersUserIdLazyRoute: UsersUserIdLazyRoute,
-};
+  IndexLazyRoute: IndexLazyRoute,
+  MyPostsRoute: MyPostsRoute,
+  AdminLazyRoute: AdminLazyRoute,
+  SearchLazyRoute: SearchLazyRoute,
+  SignInLazyRoute: SignInLazyRoute,
+  SignUpLazyRoute: SignUpLazyRoute,
+  PostsPostIdLazyRoute: PostsPostIdLazyRoute,
+  UsersUserIdLazyRoute: UsersUserIdLazyRoute,
+}
 
 export const routeTree = rootRoute
-    ._addFileChildren(rootRouteChildren)
-    ._addFileTypes<FileRouteTypes>();
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -223,6 +241,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/my-posts",
         "/admin",
         "/search",
         "/sign-in",
@@ -233,6 +252,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/my-posts": {
+      "filePath": "my-posts.tsx"
     },
     "/admin": {
       "filePath": "admin.lazy.tsx"

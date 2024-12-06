@@ -107,7 +107,7 @@ export const PostListItem = ({
                     {images.length > 0 ? (
                         <Carousel
                             setApi={setApi}
-                            className="rounded-t-xl lg:rounded-l-xl overflow-hidden h-full"
+                            className="rounded-tl-xl rounded-tr-xl sm:rounded-bl-none sm:rounded-tr-none lg:rounded-bl-none lg:rounded-tr-xl xl:rounded-bl-none xl:rounded-tr-none overflow-hidden h-full"
                         >
                             <CarouselContent className="h-full">
                                 {images.map((image, index) => (

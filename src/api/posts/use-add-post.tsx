@@ -10,7 +10,7 @@ import { Post } from '../models/post';
 import { QueryKeys } from '../query-keys';
 import { toast } from 'react-toastify';
 import { Toast } from '../../components/toast/toast';
-import { getErrorText } from '../../helpers/get-error-text';
+import { getErrorText } from '../helpers/get-error-text';
 import { ErrorCodes } from '../error-codes';
 import { FetchError } from '../fetch-error';
 

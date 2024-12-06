@@ -1,4 +1,4 @@
-import { ErrorPage } from '../pages/error/error';
+import { ErrorPage } from '../pages/error';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { AdminPage } from '@/pages/admin/admin';
 

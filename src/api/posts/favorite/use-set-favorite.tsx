@@ -4,12 +4,11 @@ import { callApi } from '../../call-api';
 import { Endpoints } from '../../endpoints';
 import { QueryKeys } from '../../query-keys';
 import { Post } from '../../models/post';
-import { toast } from 'react-toastify';
 import { FetchError } from '../../fetch-error';
 import { Favorite } from '../../models/favorite';
 import { ErrorCodes } from '../../error-codes';
-import { Toast } from '../../../components/toast/toast';
-import { getErrorText } from '../../../helpers/get-error-text';
+import { getErrorText } from '../../helpers/get-error-text';
+import { useToast } from '@/hooks/use-toast';
 
 interface Params {
     id: number;
@@ -21,6 +20,7 @@ interface Variables {
 
 export const useSetFavorite = ({ id }: Params) => {
     const queryClient = useQueryClient();
+    const { toast } = useToast();
 
     return useMutation<Response<Favorite>, FetchError, Variables>({
         mutationFn: async ({ favorite }) => {
@@ -71,6 +71,19 @@ export const useSetFavorite = ({ id }: Params) => {
                     };
                 },
             );
+
+            const title = variables.favorite
+                ? 'Post added to favorites'
+                : 'Post removed from favorites';
+
+            const description = variables.favorite
+                ? 'The post has been added to favorites'
+                : 'The post has been removed from favorites';
+
+            toast({
+                title,
+                description,
+            });
         },
         onError: (error, variables) => {
             const title = variables.favorite
@@ -80,9 +93,11 @@ export const useSetFavorite = ({ id }: Params) => {
             const errorCode =
                 error.errors[0]?.code ?? ErrorCodes.INTERNAL_SERVER_ERROR;
 
-            toast.error(
-                <Toast title={title} message={getErrorText(errorCode)} />,
-            );
+            toast({
+                title,
+                description: getErrorText(errorCode),
+                variant: 'destructive',
+            });
         },
     });
 };

@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { WallLayout } from '../../layouts/wall/wall-layout';
+import { WallLayout } from '../../layouts/wall';
 import { PostsConnector } from './connectors/posts-connector';
 import { Loader } from '../../components/loader/loader';
 import { FilterPanel } from '@/components/filter-panel';

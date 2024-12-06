@@ -1,5 +1,5 @@
 import { useUserContext } from '@/context/user-context';
-import { WallLayout } from '@/layouts/wall/wall-layout';
+import { WallLayout } from '@/layouts/wall';
 import { UsersConnector } from './connectors/users-connector';
 import { MagnifyingGlassIcon, PlusIcon } from '@radix-ui/react-icons';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { ChangeEvent, Suspense } from 'react';
 import { debounce } from '@/utils/debounce';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Loader } from '@/components/loader/loader';
-import { AddUserDialog } from '@/components/add-user-dialog';
+import { AddUserDialog } from '@/pages/admin/dialogs/add-user-dialog';
 
 const STRINGS = {
     ADMIN_PANEL: 'Admin Panel',
@@ -17,13 +17,17 @@ const STRINGS = {
     SEARCH_USERS: 'Search users',
 };
 
+interface PageParams {
+    search?: string;
+    page?: string;
+}
+
 export const AdminPage = () => {
     const user = useUserContext();
     const navigate = useNavigate();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const params: Record<string, any> = useSearch({
-        from: '/admin',
+    const params: PageParams = useSearch({
+        strict: false,
     });
 
     const [onSearch] = debounce((e: ChangeEvent<HTMLInputElement>) => {

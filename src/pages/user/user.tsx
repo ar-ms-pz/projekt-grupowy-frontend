@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { WallLayout } from '../../layouts/wall/wall-layout';
+import { WallLayout } from '../../layouts/wall';
 import { UserPostsConnector } from './connectors/posts-connector';
 import { useParams } from '@tanstack/react-router';
 import { UserHeadingConnector } from './connectors/heading-connector';

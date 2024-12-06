@@ -1,5 +1,5 @@
 import { SearchPage } from '@/pages/search/search';
-import { ErrorPage } from '../pages/error/error';
+import { ErrorPage } from '../pages/error';
 import { createLazyFileRoute } from '@tanstack/react-router';
 
 export const Route = createLazyFileRoute('/search')({

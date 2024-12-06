@@ -63,7 +63,7 @@ export const UserNav = ({ user }: Props) => {
                     <DropdownMenuItem
                         onClick={() =>
                             navigate({
-                                to: '/users/$userId',
+                                to: '/my-posts',
                                 params: { userId: `${user.id}` },
                             })
                         }

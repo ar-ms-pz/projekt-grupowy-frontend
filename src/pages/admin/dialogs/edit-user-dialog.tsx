@@ -12,8 +12,18 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
-import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormMessage,
+} from '../../../components/ui/form';
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from '../../../components/ui/alert';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import {
     Select,
@@ -22,17 +32,16 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from './ui/select';
-import { useCreateUser } from '@/api/users/use-create-user';
+} from '../../../components/ui/select';
 import { useState } from 'react';
 import { FetchError } from '@/api/fetch-error';
-import { getErrorText } from '@/helpers/get-error-text';
+import { getErrorText } from '@/api/helpers/get-error-text';
+import { useEditUser } from '@/api/users/use-edit-user';
 
 const STRINGS = {
-    CREATE_USER: 'Create user',
-    CREATE_USER_DESCRIPTION:
-        'You can create a new user here. It is recommended for the user to change his password when he logs in.',
-    USERNAME: 'Username',
+    EDIT_USER: 'Edit user',
+    EDIT_USER_DESCRIPTION:
+        'You can edit user here. If you leave the password field empty, the password will not be changed.',
     PASSWORD: 'Password',
     CONFIRM_PASSWORD: 'Confirm password',
     TYPE: 'Type',
@@ -43,20 +52,6 @@ const STRINGS = {
 };
 
 const formSchema = z.object({
-    username: z
-        .string({
-            message: 'Username is required.',
-        })
-        .min(3, {
-            message: 'Username must be at least 3 characters long.',
-        })
-        .max(32, {
-            message: 'Username can be at most 32 characters long.',
-        })
-        .regex(/^[a-zA-Z0-9_]+$/, {
-            message:
-                'Username can only contain letters, numbers, and underscores.',
-        }),
     password: z
         .string({
             message: 'Password is required.',
@@ -69,20 +64,23 @@ const formSchema = z.object({
         })
         .regex(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).+$/, {
             message: `Password must contain at least one uppercase letter, one lowercase letter, one number and one special character from the following: #?!@$ %^&*-`,
-        }),
+        })
+        .or(z.literal('')),
     type: z.enum(['ADMIN', 'USER'], {
         message: 'Type is required.',
     }),
 });
 
 interface Props {
+    userId: number;
+    userType: 'ADMIN' | 'USER';
     children: React.ReactNode;
 }
 
 type FormModel = z.infer<typeof formSchema>;
 
-export const AddUserDialog = ({ children }: Props) => {
-    const { mutateAsync: createUserMutateAsync } = useCreateUser();
+export const EditUserDialog = ({ children, userId, userType }: Props) => {
+    const { mutateAsync: editUserMutateAsync } = useEditUser();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -90,9 +88,8 @@ export const AddUserDialog = ({ children }: Props) => {
     const form = useForm<FormModel>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            username: '',
             password: '',
-            type: 'USER',
+            type: userType,
         },
     });
 
@@ -100,7 +97,7 @@ export const AddUserDialog = ({ children }: Props) => {
         setError(null);
         setLoading(true);
         try {
-            await createUserMutateAsync(data);
+            await editUserMutateAsync({ ...data, userId });
             setOpen(false);
         } catch (e) {
             if (e instanceof FetchError)
@@ -116,9 +113,9 @@ export const AddUserDialog = ({ children }: Props) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{STRINGS.CREATE_USER}</DialogTitle>
+                    <DialogTitle>{STRINGS.EDIT_USER}</DialogTitle>
                     <DialogDescription>
-                        {STRINGS.CREATE_USER_DESCRIPTION}
+                        {STRINGS.EDIT_USER_DESCRIPTION}
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
@@ -133,22 +130,6 @@ export const AddUserDialog = ({ children }: Props) => {
                                 <AlertDescription>{error}</AlertDescription>
                             </Alert>
                         )}
-                        <FormField
-                            control={form.control}
-                            name="username"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input
-                                            placeholder={STRINGS.USERNAME}
-                                            {...field}
-                                            autoComplete="username"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
                         <FormField
                             control={form.control}
                             name="password"
@@ -195,7 +176,7 @@ export const AddUserDialog = ({ children }: Props) => {
                         />
                         <DialogFooter>
                             <Button type="submit" isLoading={loading}>
-                                {STRINGS.CREATE_USER}
+                                {STRINGS.EDIT_USER}
                             </Button>
                         </DialogFooter>
                     </form>

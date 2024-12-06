@@ -7,7 +7,7 @@ export const RelativeDate = ({
     date: Date | string;
     className?: string;
 }) => {
-    const relativeText = formatRelative(date, new Date(), {});
+    const relativeText = formatRelative(date, new Date());
 
     const formattedText =
         relativeText.charAt(0).toUpperCase() + relativeText.slice(1);

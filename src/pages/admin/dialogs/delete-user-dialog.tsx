@@ -8,11 +8,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from '../../../components/ui/alert';
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
 import { FetchError } from '@/api/fetch-error';
-import { getErrorText } from '@/helpers/get-error-text';
+import { getErrorText } from '@/api/helpers/get-error-text';
 import { useDeleteUser } from '@/api/users/use-delete-user';
 
 const STRINGS = {
@@ -72,6 +76,7 @@ export const DeleteUserDialog = ({ children, userId }: Props) => {
                         type="button"
                         disabled={loading}
                         variant="secondary"
+                        onClick={() => setOpen(false)}
                     >
                         {STRINGS.CANCEL}
                     </Button>
