@@ -42,6 +42,7 @@ export const usePosts = ({
                 ...variables,
                 isFavorite: favoritesOnly ? 'true' : undefined,
                 userId: userId ? `${userId}` : undefined,
+                type: variables?.type !== 'ANY' ? variables.type : undefined,
             };
 
         const { distance: rawDistance, ...queryParams } =
@@ -65,6 +66,7 @@ export const usePosts = ({
             longitude: shouldUseDistance ? longitude : undefined,
             latitude: shouldUseDistance ? latitude : undefined,
             isFavorite: favoritesOnly ? 'true' : undefined,
+            // type: queryParams.type !== 'ANY' ? parsedParams.type : undefined,
         };
     }, [params, address, variables, favoritesOnly, userId]);
 

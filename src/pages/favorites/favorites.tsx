@@ -1,19 +1,19 @@
 import { AddressSearch } from '@/components/address-search';
 import { FilterPanel, PostSearchFormModel } from '@/components/filter-panel';
-import { useUserContext } from '@/context/user-context';
 import { WallLayout } from '@/layouts/wall';
 import { getFiltersSearchParams } from '@/lib/get-search-url-params';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Suspense, useMemo } from 'react';
-import { MyPostsConnector } from './connectors/my-posts-connector';
+import { FavoritePostsConnector } from './connectors/favorite-posts-connector';
 import { Loader } from '@/components/loader/loader';
+import { useUserContext } from '@/context/user-context';
 
 const STRINGS = {
-    MY_POSTS: 'My posts',
+    MY_FAVORITE_POSTS: 'My favorite posts',
     NO_PERMISSION: 'You do not have permission to view this page.',
 };
 
-export const MyPostsPage = () => {
+export const FavoritePostsPage = () => {
     const user = useUserContext();
 
     if (!user)
@@ -44,7 +44,7 @@ export const MyPostsPage = () => {
         navigate({
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             search: newSearch as any,
-            to: '/my-posts',
+            to: '/favorites',
         });
     };
 
@@ -56,10 +56,10 @@ export const MyPostsPage = () => {
 
     return (
         <WallLayout>
-            <div className="flex flex-col items-center w-full py-12 gap-8">
+            <div className="flex flex-col items-center w-full py-12 gap-8 px-4">
                 <div className="flex flex-col container border p-4 rounded-lg">
                     <h1 className="text-3xl font-semibold tracking-tight p-4">
-                        {STRINGS.MY_POSTS}
+                        {STRINGS.MY_FAVORITE_POSTS}
                     </h1>
                     <AddressSearch />
                     <FilterPanel
@@ -78,7 +78,7 @@ export const MyPostsPage = () => {
                             </div>
                         }
                     >
-                        <MyPostsConnector />
+                        <FavoritePostsConnector />
                     </Suspense>
                 </div>
             </div>

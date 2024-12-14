@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 const STRINGS = {
     TYPE: 'Type',
     SELECT_TYPE: 'Select post type',
+    ANY: 'Any',
     RENTAL: 'Rental',
     SALE: 'Sale',
     MIN: 'Min',
@@ -36,7 +37,7 @@ const STRINGS = {
 
 const formSchema = z
     .object({
-        type: z.enum(['SALE', 'RENTAL'], {
+        type: z.enum(['ANY', 'SALE', 'RENTAL'], {
             message: 'Type is required.',
         }),
         minArea: z
@@ -140,7 +141,7 @@ export const FilterPanel = ({
     const onClearWrapper = async () => {
         await onClear?.();
         form.reset({
-            type: 'SALE',
+            type: 'ANY',
         });
     };
 
@@ -172,6 +173,9 @@ export const FilterPanel = ({
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectGroup>
+                                                <SelectItem value="ANY">
+                                                    {STRINGS.ANY}
+                                                </SelectItem>
                                                 <SelectItem value="SALE">
                                                     {STRINGS.SALE}
                                                 </SelectItem>

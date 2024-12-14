@@ -135,9 +135,7 @@ export const HomePage = () => {
                             </h2>
 
                             <Button variant="link" asChild>
-                                {/* TODO */}
-                                {/* <Link to="/favorites">{STRINGS.VIEW_ALL}</Link> */}
-                                <Link>{STRINGS.VIEW_ALL}</Link>
+                                <Link to="/favorites">{STRINGS.VIEW_ALL}</Link>
                             </Button>
                         </div>
                         <Suspense

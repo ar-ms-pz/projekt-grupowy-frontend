@@ -25,6 +25,7 @@ const STRINGS = {
     SIGN_OUT: 'Sign out',
     MY_POSTS: 'My Posts',
     ADMIN_PANEL: 'Admin Panel',
+    MY_FAVORITES: 'My Favorites',
 };
 
 export const UserNav = ({ user }: Props) => {
@@ -64,12 +65,21 @@ export const UserNav = ({ user }: Props) => {
                         onClick={() =>
                             navigate({
                                 to: '/my-posts',
-                                params: { userId: `${user.id}` },
                             })
                         }
                     >
                         {STRINGS.MY_POSTS}
                         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() =>
+                            navigate({
+                                to: '/favorites',
+                            })
+                        }
+                    >
+                        {STRINGS.MY_FAVORITES}
+                        <DropdownMenuShortcut>⇧⌘F</DropdownMenuShortcut>
                     </DropdownMenuItem>
                     {user.type === 'ADMIN' && (
                         <DropdownMenuItem asChild>

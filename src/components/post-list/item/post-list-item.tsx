@@ -31,12 +31,14 @@ import { Button } from '@/components/ui/button';
 import { CameraIcon, HeartFilledIcon } from '@radix-ui/react-icons';
 import { useUserContext } from '@/context/user-context';
 import { useSetFavorite } from '@/api/posts/favorite/use-set-favorite';
+import { cn } from '@/lib/utils';
 
 const STRINGS = {
     PER_MONTH: 'per month',
     ROOM: 'room',
     ROOMS: 'rooms',
     VIEW_DETAILS: 'View details',
+    EDIT: 'Edit',
     OF: 'of',
 };
 
@@ -66,6 +68,8 @@ const formatPricePerMeter = (price: number, area: number) => {
 
 type Props = {
     displayMode?: 'status' | 'favorite';
+    displayFormat?: 'list' | 'grid';
+    editButton?: boolean;
 } & Post;
 
 export const PostListItem = ({
@@ -80,6 +84,8 @@ export const PostListItem = ({
     status,
     isFavorite,
     displayMode = 'favorite',
+    displayFormat = 'list',
+    editButton = false,
 }: Props) => {
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState(0);
@@ -102,12 +108,18 @@ export const PostListItem = ({
 
     return (
         <Card>
-            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row">
+            <div
+                className={cn('flex ', displayFormat === 'grid' && 'flex-col')}
+            >
                 <div className="basis-2/5">
                     {images.length > 0 ? (
                         <Carousel
                             setApi={setApi}
-                            className="rounded-tl-xl rounded-tr-xl sm:rounded-bl-none sm:rounded-tr-none lg:rounded-bl-none lg:rounded-tr-xl xl:rounded-bl-none xl:rounded-tr-none overflow-hidden h-full"
+                            className={cn(
+                                'overflow-hidden h-full',
+                                displayFormat === 'grid' && 'rounded-t-xl',
+                                displayFormat === 'list' && 'rounded-l-xl',
+                            )}
                         >
                             <CarouselContent className="h-full">
                                 {images.map((image, index) => (
@@ -194,9 +206,18 @@ export const PostListItem = ({
                         </CardDescription>
                     </CardContent>
                     <CardFooter className="flex w-full justify-end">
-                        <Button id={`post-${id}-details`}>
-                            {STRINGS.VIEW_DETAILS}
-                        </Button>
+                        {editButton ? (
+                            <div className="flex gap-2">
+                                <Button variant="secondary">
+                                    {STRINGS.VIEW_DETAILS}
+                                </Button>
+                                <Button>{STRINGS.EDIT}</Button>
+                            </div>
+                        ) : (
+                            <Button id={`post-${id}-details`}>
+                                {STRINGS.VIEW_DETAILS}
+                            </Button>
+                        )}
                     </CardFooter>
                 </div>
             </div>
