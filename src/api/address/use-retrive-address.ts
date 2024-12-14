@@ -23,7 +23,7 @@ interface SearchAddressResponse {
 export const useRetrieveAddress = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { mapboxId }: Record<string, any> = useSearch({
-        from: '/search',
+        strict: false,
     });
 
     return useQuery<SearchAddressResponse, FetchError>({

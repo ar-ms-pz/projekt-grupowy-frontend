@@ -11,15 +11,39 @@ import { useMemo } from 'react';
 import { getFiltersSearchParams } from '@/lib/get-search-url-params';
 import { useRetrieveAddress } from '../address/use-retrive-address';
 
-export const usePosts = () => {
+type Variables = ReturnType<typeof getFiltersSearchParams>;
+
+interface Options {
+    /** Overwrites search params */
+    variables?: Partial<Variables>;
+
+    /** Show only favorite posts */
+    favoritesOnly?: boolean;
+
+    /** Show only posts for given userId */
+    userId?: number;
+}
+
+export const usePosts = ({
+    variables,
+    favoritesOnly,
+    userId,
+}: Options = {}) => {
     const { data: address } = useRetrieveAddress();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: Record<string, any> = useSearch({
-        from: '/search',
+        strict: false,
     });
 
     const parsedParams = useMemo(() => {
+        if (variables)
+            return {
+                ...variables,
+                isFavorite: favoritesOnly ? 'true' : undefined,
+                userId: userId ? `${userId}` : undefined,
+            };
+
         const { distance: rawDistance, ...queryParams } =
             getFiltersSearchParams(params);
 
@@ -40,8 +64,9 @@ export const usePosts = () => {
             distance: shouldUseDistance ? distance : undefined,
             longitude: shouldUseDistance ? longitude : undefined,
             latitude: shouldUseDistance ? latitude : undefined,
+            isFavorite: favoritesOnly ? 'true' : undefined,
         };
-    }, [params, address]);
+    }, [params, address, variables, favoritesOnly, userId]);
 
     const paramsPage = (params as { page: unknown }).page;
 
@@ -58,7 +83,11 @@ export const usePosts = () => {
         PaginatedResponse<Post>,
         QueryKey
     >({
-        queryKey: [QueryKeys.POSTS, params.mapboxId, parsedParams, page],
+        queryKey: [
+            parsedParams.isFavorite ? QueryKeys.FAVORITES : QueryKeys.POSTS,
+            parsedParams,
+            page,
+        ],
         queryFn: async ({ signal }) => {
             return callApi(Endpoints.POSTS, {
                 signal,

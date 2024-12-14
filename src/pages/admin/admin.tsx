@@ -86,7 +86,7 @@ export const AdminPage = () => {
                 </div>
                 <Suspense
                     fallback={
-                        <div className="w-full h-[calc(100vh-8.25rem)] flex justify-center items-center">
+                        <div className="w-full h-[calc(100vh-12.25rem)] flex justify-center items-center">
                             <Loader />
                         </div>
                     }

@@ -32,7 +32,11 @@ const STRINGS = {
 
 const DISTANCE_STEPS = ['1', '5', '10', '15', '20', '30', '50', '100'] as const;
 
-export const AddressSearch = () => {
+interface Props {
+    className?: string;
+}
+
+export const AddressSearch = ({ className }: Props) => {
     const [search, setSearch] = useState('');
     const [selectedValue, setSelectedValue] =
         useState<SearchAddressSuggestion>();
@@ -52,26 +56,26 @@ export const AddressSearch = () => {
 
     const { navigate } = useRouter();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const queryParams: Record<string, any> = useSearch({ from: '/search' });
+    const queryParams: Record<string, any> = useSearch({ strict: false });
 
     useEffect(() => {
         if (!isMounted) return;
 
         if (selectedValue) {
             navigate({
-                to: '/search',
                 search: {
                     ...queryParams,
                     mapboxId: selectedValue.mapbox_id,
                 },
-            });
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
         } else {
             const paramsCopy = { ...queryParams, mapboxId: undefined };
 
             navigate({
-                to: '/search',
                 search: paramsCopy,
-            });
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } as any);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate, queryParams, selectedValue]);
@@ -87,18 +91,22 @@ export const AddressSearch = () => {
         300,
     );
 
+    useEffect(() => {
+        if (!queryParams.mapboxId) setSelectedValue(undefined);
+    }, [queryParams.mapboxId]);
+
     const setDistance = (distance: string) => {
         navigate({
-            to: '/search',
             search: {
                 ...queryParams,
                 distance,
             },
-        });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any);
     };
 
     return (
-        <div className="p-4">
+        <div className={cn('p-4', className)}>
             <div className="flex gap-4 flex-1">
                 {selectedValue ? (
                     <div className="w-full relative">

@@ -1,0 +1,116 @@
+import { Post } from '@/api/models/post';
+import { CarouselItem } from '../ui/carousel';
+import {
+    Card,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '../ui/card';
+import { getImageUrl } from '@/utils/getImageUrl';
+import { ImageOff, MapPinIcon } from 'lucide-react';
+import { Button } from '../ui/button';
+import { useUserContext } from '@/context/user-context';
+import { useSetFavorite } from '@/api/posts/favorite/use-set-favorite';
+import { HeartFilledIcon, HeartIcon } from '@radix-ui/react-icons';
+import { Badge } from '../ui/badge';
+import { capitalize } from '@/utils/capitalize';
+
+interface Props {
+    post: Post;
+    displayMode?: 'status' | 'favorite';
+}
+
+const STRINGS = {
+    PER_MONTH: 'per month',
+    ROOM: 'room',
+    ROOMS: 'rooms',
+    VIEW_DETAILS: 'View details',
+};
+
+const formatPrice = (price: number, type: 'RENTAL' | 'SALE') => {
+    const formattedPrice = price.toLocaleString('pl-PL', {
+        style: 'currency',
+        currency: 'PLN',
+        maximumFractionDigits: 0,
+    });
+
+    if (type === 'RENTAL') {
+        return `${formattedPrice} ${STRINGS.PER_MONTH}`;
+    }
+
+    return formattedPrice;
+};
+
+export const PostCarouselItem = ({
+    post: { id, images, title, isFavorite, price, type, address, status },
+    displayMode = 'favorite',
+}: Props) => {
+    const user = useUserContext();
+    const { mutateAsync: setFavoriteMutateAsync } = useSetFavorite({ id });
+
+    return (
+        <CarouselItem className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
+            <Card>
+                {images[0]?.url ? (
+                    <img
+                        className="h-full object-cover rounded-t-md  aspect-[4/3]"
+                        src={getImageUrl(images[0]?.url)}
+                        alt={title}
+                    />
+                ) : (
+                    <div className="flex h-full w-full items-center justify-center border-b aspect-[4/3]">
+                        <ImageOff className="h-12 w-full text-muted-foreground" />
+                    </div>
+                )}
+
+                <CardHeader className="pb-4">
+                    <CardTitle className="justify-between flex w-full">
+                        <div className="text-2xl font-semibold tracking-tight truncate">
+                            {formatPrice(price, type)}
+                        </div>
+                        {displayMode === 'status' ? (
+                            <Badge
+                                className="max-h-6"
+                                /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+                                variant={status.toLowerCase() as any}
+                            >
+                                {capitalize(status)}
+                            </Badge>
+                        ) : (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="[&_svg]:size-5"
+                                disabled={!user}
+                                onClick={() =>
+                                    setFavoriteMutateAsync({
+                                        favorite: !isFavorite,
+                                    })
+                                }
+                            >
+                                {isFavorite ? (
+                                    <HeartFilledIcon />
+                                ) : (
+                                    <HeartIcon />
+                                )}
+                            </Button>
+                        )}
+                    </CardTitle>
+                    <CardDescription className="text-foreground font-medium tracking-tight truncate">
+                        {title}
+                    </CardDescription>
+                    <CardDescription className="flex items-center gap-2 pt-2 truncate">
+                        <MapPinIcon className="min-w-4" />
+                        {address}
+                    </CardDescription>
+                </CardHeader>
+                <CardFooter className="flex w-full justify-end">
+                    <Button id={`post-${id}-details`}>
+                        {STRINGS.VIEW_DETAILS}
+                    </Button>
+                </CardFooter>
+            </Card>
+        </CarouselItem>
+    );
+};

@@ -72,6 +72,9 @@ export const useSetFavorite = ({ id }: Params) => {
                 },
             );
 
+            // Add or remove post from favorites
+            queryClient.invalidateQueries({ queryKey: [QueryKeys.FAVORITES] });
+
             const title = variables.favorite
                 ? 'Post added to favorites'
                 : 'Post removed from favorites';

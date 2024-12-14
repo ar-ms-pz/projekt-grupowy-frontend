@@ -131,7 +131,7 @@ export const PostListItem = ({
                             </Badge>
                         </Carousel>
                     ) : (
-                        <div className="flex h-full w-full items-center justify-center border-r aspect-[4/3]">
+                        <div className="flex h-full w-full items-center justify-center border-r border-b aspect-[4/3]">
                             <ImageOff className="h-12 w-full text-muted-foreground" />
                         </div>
                     )}

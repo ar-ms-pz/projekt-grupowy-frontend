@@ -1,4 +1,4 @@
-import { HomePage } from '../pages/home';
+import { HomePage } from '../pages/home/home';
 import { ErrorPage } from '../pages/error';
 import { createLazyFileRoute } from '@tanstack/react-router';
 
