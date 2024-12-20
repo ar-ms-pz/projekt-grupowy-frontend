@@ -1,23 +1,28 @@
 import { Suspense } from 'react';
-import { SinglePostConnector } from './connectors/post-connector';
+import { PostConnector } from './connectors/post-connector';
 import { useParams } from '@tanstack/react-router';
-import { Loader } from '../../components/loader/loader';
-import $ from './single-post.module.scss';
+import { GlobalLoader } from '@/components/global-loader/global-loader';
+import { PostEditor } from '@/components/post-editor/post-editor';
+import { WallLayout } from '@/layouts/wall';
 
 export const SinglePostPage = () => {
     const { postId } = useParams({
-        from: '/posts/$postId',
+        from: '/posts/$postId/',
     });
 
+    if (postId === 'new') {
+        return (
+            <WallLayout>
+                <PostEditor />
+            </WallLayout>
+        );
+    }
+
     return (
-        <Suspense
-            fallback={
-                <div className={$.loadingContainer}>
-                    <Loader />
-                </div>
-            }
-        >
-            <SinglePostConnector id={+postId} />
-        </Suspense>
+        <WallLayout>
+            <Suspense fallback={<GlobalLoader />}>
+                <PostConnector id={postId} />
+            </Suspense>
+        </WallLayout>
     );
 };

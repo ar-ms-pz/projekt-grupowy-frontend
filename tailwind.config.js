@@ -66,6 +66,14 @@ export default {
                     4: 'hsl(var(--chart-4))',
                     5: 'hsl(var(--chart-5))',
                 },
+                brand: {
+                    DEFAULT: 'hsl(var(--brand))',
+                    foreground: 'hsl(var(--brand-foreground))',
+                },
+                highlight: {
+                    DEFAULT: 'hsl(var(--highlight))',
+                    foreground: 'hsl(var(--highlight-foreground))',
+                },
             },
             keyframes: {
                 'accordion-down': {
@@ -89,6 +97,11 @@ export default {
                 'accordion-down': 'accordion-down 0.2s ease-out',
                 'accordion-up': 'accordion-up 0.2s ease-out',
             },
+            screens: {
+                'main-hover': {
+                    raw: '(hover: hover)',
+                },
+            },
         },
     },
     plugins: [
@@ -104,5 +117,6 @@ export default {
             };
             addUtilities(newUtilities, ['responsive', 'hover']);
         }),
+        require('tailwind-scrollbar-hide'),
     ],
 };

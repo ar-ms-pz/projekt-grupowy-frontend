@@ -1,27 +1,14 @@
+import { PostEditor } from '@/components/post-editor/post-editor';
 import { usePost } from '../../../api/posts/use-post';
-import { Post } from '../../../components/post/post';
-import { getImageUrl } from '../../../utils/getImageUrl';
 
 type Props = {
-    id: number;
+    id: string;
 };
 
-export const SinglePostConnector = ({ id }: Props) => {
+export const PostConnector = ({ id }: Props) => {
     const { data } = usePost({
         id,
     });
 
-    const { image, author, createdAt, description, isLiked } = data.data;
-
-    return (
-        <Post
-            id={id}
-            imageSrc={getImageUrl(image)}
-            description={description}
-            authorName={author.name}
-            createdAt={createdAt}
-            authorId={author.id}
-            isLiked={isLiked}
-        />
-    );
+    return <PostEditor post={data.data} disabled />;
 };

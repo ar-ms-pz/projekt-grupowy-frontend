@@ -32,6 +32,8 @@ import { CameraIcon, HeartFilledIcon } from '@radix-ui/react-icons';
 import { useUserContext } from '@/context/user-context';
 import { useSetFavorite } from '@/api/posts/favorite/use-set-favorite';
 import { cn } from '@/lib/utils';
+import { Link } from '@tanstack/react-router';
+import { formatPrice, formatPricePerMeter } from '@/lib/formatters';
 
 const STRINGS = {
     PER_MONTH: 'per month',
@@ -40,30 +42,6 @@ const STRINGS = {
     VIEW_DETAILS: 'View details',
     EDIT: 'Edit',
     OF: 'of',
-};
-
-const formatPrice = (price: number, type: 'RENTAL' | 'SALE') => {
-    const formattedPrice = price.toLocaleString('pl-PL', {
-        style: 'currency',
-        currency: 'PLN',
-        maximumFractionDigits: 0,
-    });
-
-    if (type === 'RENTAL') {
-        return `${formattedPrice} ${STRINGS.PER_MONTH}`;
-    }
-
-    return formattedPrice;
-};
-
-const formatPricePerMeter = (price: number, area: number) => {
-    const pricePerMeter = price / area;
-
-    return `${pricePerMeter.toLocaleString('pl-PL', {
-        style: 'currency',
-        currency: 'PLN',
-        maximumFractionDigits: 0,
-    })}/m²`;
 };
 
 type Props = {
@@ -208,14 +186,37 @@ export const PostListItem = ({
                     <CardFooter className="flex w-full justify-end">
                         {editButton ? (
                             <div className="flex gap-2">
-                                <Button variant="secondary">
-                                    {STRINGS.VIEW_DETAILS}
+                                <Button variant="secondary" asChild>
+                                    <Link
+                                        to="/posts/$postId"
+                                        params={{
+                                            postId: `${id}`,
+                                        }}
+                                    >
+                                        {STRINGS.VIEW_DETAILS}
+                                    </Link>
                                 </Button>
-                                <Button>{STRINGS.EDIT}</Button>
+                                <Button asChild>
+                                    <Link
+                                        to="/posts/$postId/edit"
+                                        params={{
+                                            postId: `${id}`,
+                                        }}
+                                    >
+                                        {STRINGS.EDIT}
+                                    </Link>
+                                </Button>
                             </div>
                         ) : (
-                            <Button id={`post-${id}-details`}>
-                                {STRINGS.VIEW_DETAILS}
+                            <Button asChild>
+                                <Link
+                                    to="/posts/$postId"
+                                    params={{
+                                        postId: `${id}`,
+                                    }}
+                                >
+                                    {STRINGS.VIEW_DETAILS}
+                                </Link>
                             </Button>
                         )}
                     </CardFooter>

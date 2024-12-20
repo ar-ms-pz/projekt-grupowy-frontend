@@ -18,4 +18,5 @@ export const STRINGS = {
     LIKED_BY_MANY: 'Liked by {{likes}} people',
 
     LOADING: 'Loading...',
+    PER_MONTH: 'per month',
 };
