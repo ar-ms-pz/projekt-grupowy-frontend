@@ -5,6 +5,7 @@ import { GlobalLoader } from '@/components/global-loader';
 import { PostEditor } from '@/components/post-editor/post-editor';
 import { WallLayout } from '@/layouts/wall';
 import { useUserContext } from '@/context/user-context';
+import { PlateController } from '@udecode/plate-common/react';
 
 const STRINGS = {
     NO_PERMISSION: 'You do not have permission to view this page.',
@@ -30,7 +31,9 @@ export const SinglePostPage = ({ isEditing }: Props) => {
 
         return (
             <WallLayout>
-                <PostEditor />
+                <PlateController>
+                    <PostEditor />
+                </PlateController>
             </WallLayout>
         );
     }
@@ -44,9 +47,11 @@ export const SinglePostPage = ({ isEditing }: Props) => {
 
     return (
         <WallLayout>
-            <Suspense fallback={<GlobalLoader />}>
-                <PostConnector id={postId} isEditing={isEditing} />
-            </Suspense>
+            <PlateController>
+                <Suspense fallback={<GlobalLoader />}>
+                    <PostConnector id={postId} isEditing={isEditing} />
+                </Suspense>
+            </PlateController>
         </WallLayout>
     );
 };

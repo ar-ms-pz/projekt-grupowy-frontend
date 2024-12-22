@@ -18,9 +18,12 @@ interface Props {
 const emptyFn = () => {};
 
 export const RichtextEditor = ({ value, readOnly, onChange }: Props) => {
+    console.log(value);
+
     const editor = useCreateEditor({
         value,
         readOnly,
+        id: 'richtext-editor',
     });
 
     const [debounced] = debounce(onChange || emptyFn, 300);
