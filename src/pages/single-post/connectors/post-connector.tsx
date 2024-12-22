@@ -3,12 +3,13 @@ import { usePost } from '../../../api/posts/use-post';
 
 type Props = {
     id: string;
+    isEditing?: boolean;
 };
 
-export const PostConnector = ({ id }: Props) => {
+export const PostConnector = ({ id, isEditing }: Props) => {
     const { data } = usePost({
         id,
     });
 
-    return <PostEditor post={data.data} disabled />;
+    return <PostEditor post={data.data} disabled={!isEditing} />;
 };

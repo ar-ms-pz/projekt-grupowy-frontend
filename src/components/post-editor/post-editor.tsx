@@ -1,185 +1,239 @@
 import { Post } from '@/api/models/post';
-import { Button } from '../ui/button';
-import {
-    ArrowLeft,
-    BoxIcon,
-    HeartIcon,
-    LandPlotIcon,
-    MapPinIcon,
-} from 'lucide-react';
-import { CameraIcon, HeartFilledIcon } from '@radix-ui/react-icons';
-import { useUserContext } from '@/context/user-context';
-import {
-    Carousel,
-    CarouselApi,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from '../ui/carousel';
-import { getImageUrl } from '@/utils/getImageUrl';
-import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Badge } from '../ui/badge';
-import { formatPrice, formatPricePerMeter } from '@/lib/formatters';
-import { RichtextEditor } from '../richtext-editor/richtext-editor';
+import { AtSignIcon, PhoneIcon } from 'lucide-react';
 
-interface Props {
-    post?: Post;
-    disabled?: boolean;
+import { RichtextEditor } from '../richtext-editor/richtext-editor';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { getInitials } from '@/utils/getInitials';
+import { capitalize } from '../../utils/capitalize';
+import { TopNav } from './components/top-nav';
+import { Header } from './components/header';
+import { useForm } from 'react-hook-form';
+import { Form, FormField, FormItem } from '../ui/form';
+import { ImageCarousel } from './components/image-carousel';
+import { ImageInput } from './components/image-input';
+import { Details } from './components/details';
+import { useUserContext } from '@/context/user-context';
+import { createDefaultValues } from './form/create-default-values';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PostFormFields, postFormSchema } from './form/schema';
+import { useEffect } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { useAddPost } from '@/api/posts/use-add-post';
+import { useEditPost } from '@/api/posts/use-edit-post';
+import { Map } from '../map/map';
+import { Marker } from 'react-leaflet';
+import { LocationSelector } from '../location-selector/location-selector';
+
+interface ViewProps {
+    post: Post;
+    disabled: true;
 }
 
+interface EditProps {
+    post?: Post;
+    disabled?: false;
+}
+
+type Props = ViewProps | EditProps;
+
 const STRINGS = {
-    BACK: 'Back',
-    ADD_TO_FAVORITES: 'Add to favorites',
-    REMOVE_FROM_FAVORITES: 'Remove from favorites',
-    OF: 'of',
-    PER_MONTH: 'per month',
-    ADDRESS: 'Address',
-    AREA: 'Area',
-    ROOMS: 'Rooms',
-    METERS_SQUARED: 'm²',
+    EMAIL: 'Email',
+    PHONE: 'Phone Number',
+    SELLER: 'Seller',
+    LOCATION: 'Location',
 };
 
 export const PostEditor = ({ post, disabled }: Props) => {
+    const form = useForm<PostFormFields>({
+        defaultValues: createDefaultValues(post),
+        resolver: zodResolver(postFormSchema),
+    });
     const user = useUserContext();
-    const [current, setCurrent] = useState(0);
-    const [count, setCount] = useState(0);
-    const [bigCarouselApi, setBigCarouselApi] = useState<CarouselApi | null>(
-        null,
-    );
-    const [smallCarouselApi, setSmallCarouselApi] =
-        useState<CarouselApi | null>(null);
+    const navigate = useNavigate();
+
+    const { mutateAsync: mutateAsyncEditPost, isPending: isPendingEditPost } =
+        useEditPost({ id: +(post?.id || 0) });
+
+    const { mutateAsync: mutateAsyncAddPost, isPending: isPendingAddPost } =
+        useAddPost();
 
     useEffect(() => {
-        if (!bigCarouselApi) return;
+        if (disabled || !form.formState.isDirty) return;
 
-        setCount(bigCarouselApi.scrollSnapList().length);
-        setCurrent(bigCarouselApi.selectedScrollSnap() + 1);
+        window.onbeforeunload = () => true;
 
-        bigCarouselApi.on('select', () => {
-            setCurrent(bigCarouselApi.selectedScrollSnap() + 1);
+        return () => {
+            window.onbeforeunload = null;
+        };
+    }, [disabled, form.formState.isDirty]);
+
+    const onSubmit = async (data: PostFormFields) => {
+        if (disabled) return;
+
+        const { removeImages, ...rest } = data;
+
+        if (post?.id) {
+            await mutateAsyncEditPost({
+                ...rest,
+                removeImages,
+            });
+
+            return navigate({
+                to: `/posts/$postId`,
+                params: { postId: `${post.id}` },
+                replace: true,
+            });
+        }
+
+        const newPost = await mutateAsyncAddPost(rest);
+
+        return navigate({
+            to: `/posts/$postId`,
+            params: { postId: `${newPost.data.id}` },
+            replace: true,
         });
-    }, [bigCarouselApi]);
+    };
 
-    useEffect(() => {
-        if (!smallCarouselApi) return;
+    const author = post?.author ?? user!;
 
-        smallCarouselApi.scrollTo(current - 1);
-    }, [current, smallCarouselApi]);
+    const isPending = isPendingEditPost || isPendingAddPost;
+
+    const lat = disabled ? post.latitude : form.watch('latitude');
+    const lng = disabled ? post.longitude : form.watch('longitude');
+
+    const mapCenter: [number, number] = [lat, lng];
+
+    const parsedDescription = JSON.parse(post?.description || '{}');
 
     return (
-        <div>
-            <div className="flex justify-between px-4 pt-4">
-                <Button variant="ghost">
-                    <ArrowLeft />
-                    {STRINGS.BACK}
-                </Button>
+        <Form {...form}>
+            <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col items-center"
+            >
+                <TopNav
+                    isEditing={!disabled}
+                    postId={post?.id}
+                    authorId={post?.author.id}
+                    isFavorite={!!post?.isFavorite}
+                    status={post?.status}
+                    control={form.control}
+                    isDirty={!disabled || form.formState.isDirty}
+                    isSaving={isPending}
+                />
 
-                <Button disabled={!user} variant="ghost">
-                    {post?.isFavorite ? <HeartFilledIcon /> : <HeartIcon />}
-                    {post?.isFavorite
-                        ? STRINGS.REMOVE_FROM_FAVORITES
-                        : STRINGS.ADD_TO_FAVORITES}
-                </Button>
-            </div>
-            <div className="w-full flex justify-center">
-                <div className="container p-4 w-2/3 gap-4 flex flex-col">
-                    <div className="border rounded-xl py-2 px-4 flex flex-col gap-4">
-                        <div className="py-2">
-                            <div className="flex justify-between items-center">
-                                <h1 className="text-2xl font-bold">
-                                    {formatPrice(post!.price, post!.type)}
-                                </h1>
-                                <p className="text-md">
-                                    {formatPricePerMeter(
-                                        post!.price,
-                                        post!.area,
-                                    )}
-                                </p>
-                            </div>
-                            <p className="text-md">{post?.title}</p>
+                <div className="container flex justify-center flex-col xl:gap-4 xl:flex-row">
+                    <div className="p-4 xl:w-2/3 gap-4 flex flex-col">
+                        <div className="border rounded-xl py-2 px-4 flex flex-col gap-4">
+                            <Header
+                                area={post?.area}
+                                price={post?.price}
+                                title={post?.title}
+                                type={post?.type}
+                                control={form.control}
+                                // Typescript dumb
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                isEditing={!disabled as any}
+                            />
+                            {disabled && post ? (
+                                <ImageCarousel
+                                    images={post.images}
+                                    title={post.title}
+                                />
+                            ) : (
+                                <ImageInput
+                                    images={post?.images ?? []}
+                                    control={form.control}
+                                    setValue={form.setValue}
+                                />
+                            )}
                         </div>
-                        <div>
-                            <Carousel
-                                setApi={setBigCarouselApi}
-                                className="w-full"
-                            >
-                                <CarouselContent>
-                                    {post?.images.map((image, index) => (
-                                        <CarouselItem key={index}>
-                                            <img
-                                                className="h-full object-cover rounded-lg"
-                                                src={getImageUrl(image.url)}
-                                                alt={post.title}
+
+                        <Details
+                            control={form.control}
+                            address={post?.address}
+                            area={post?.area}
+                            rooms={post?.rooms}
+                            createdAt={post?.createdAt}
+                            updatedAt={post?.updatedAt}
+                            // Typescript dumb
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            isEditing={!disabled as any}
+                        />
+
+                        {(!disabled ||
+                            parsedDescription?.children?.length > 1) && (
+                            <div className="border rounded-xl">
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <RichtextEditor
+                                                readOnly={disabled}
+                                                value={field.value}
+                                                onChange={({ value }) =>
+                                                    field.onChange(value)
+                                                }
                                             />
-                                        </CarouselItem>
-                                    ))}
-                                </CarouselContent>
-                                <CarouselPrevious className="left-4" />
-                                <CarouselNext className="right-4" />
-                                <Badge
-                                    variant="secondary"
-                                    className="absolute bottom-4 right-4 flex gap-2"
-                                >
-                                    <CameraIcon />
-                                    {current} {STRINGS.OF} {count}
-                                </Badge>
-                            </Carousel>
-                        </div>
-                        <Carousel
-                            className="w-full mb-2"
-                            setApi={setSmallCarouselApi}
-                        >
-                            <CarouselContent>
-                                {post?.images.map((image, index) => (
-                                    <CarouselItem
-                                        key={index}
-                                        className="basis-1/2 md:basis-1/4 xl:basis-1/5"
-                                        onClick={() =>
-                                            bigCarouselApi?.scrollTo(index)
-                                        }
-                                    >
-                                        <img
-                                            className={cn(
-                                                'h-full object-cover border-2 rounded-md',
-                                                index === current - 1
-                                                    ? 'border-primary'
-                                                    : 'border-transparent',
-                                            )}
-                                            src={getImageUrl(image.url)}
-                                            alt={post.title}
-                                        />
-                                    </CarouselItem>
-                                ))}
-                            </CarouselContent>
-                        </Carousel>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        )}
                     </div>
-                    <dl className="border rounded-xl grid grid-cols-2 p-4 gap-1">
-                        <dt className="flex gap-2 text-md font-medium items-center">
-                            <MapPinIcon size={20} />
-                            {STRINGS.ADDRESS}
-                        </dt>
-                        <dd>{post?.address}</dd>
-                        <dt className="flex gap-2 text-md font-medium items-center">
-                            <LandPlotIcon size={20} />
-                            {STRINGS.AREA}
-                        </dt>
-                        <dd>
-                            {post?.area} {STRINGS.METERS_SQUARED}
-                        </dd>
-                        <dt className="flex gap-2 font-medium text-md items-center">
-                            <BoxIcon size={20} />
-                            {STRINGS.ROOMS}
-                        </dt>
-                        <dd>{post?.rooms}</dd>
-                    </dl>
-                    <div className="border rounded-xl">
-                        <RichtextEditor />
+                    <div className="container flex flex-col gap-4 px-4 pb-8 xl:w-1/3 lg:pt-4">
+                        <div className="border rounded-xl p-4 ">
+                            <h2 className="text-xl">{STRINGS.SELLER}</h2>
+                            <div className="flex flex-col sm:flex-row xl:flex-col justify-center gap-4 items-center">
+                                <div className="flex flex-col w-full gap-4 items-center p-8 xl:p-0">
+                                    <Avatar className="size-32">
+                                        {/* TODO: Stretch add user avatars */}
+                                        {/* <AvatarImage src="/avatars/01.png" alt="@shadcn" /> */}
+                                        <AvatarFallback className="text-4xl">
+                                            {getInitials(author.name)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <h3 className="text-lg">
+                                        {capitalize(author.name)}
+                                    </h3>
+                                </div>
+                                <dl className="grid grid-cols-1 lg:grid-cols-2 p-4 gap-1 w-full">
+                                    <dt className="flex gap-2 text-md font-medium items-center">
+                                        <AtSignIcon size={20} />
+                                        {STRINGS.EMAIL}
+                                    </dt>
+                                    <dd>{author?.email}</dd>
+                                    <dt className="flex gap-2 text-md font-medium items-center pt-4 lg:pt-0">
+                                        <PhoneIcon size={20} />
+                                        {STRINGS.PHONE}
+                                    </dt>
+                                    <dd>{author?.phone}</dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <div className="border rounded-xl p-4 flex flex-col gap-4">
+                            <h2 className="text-xl">{STRINGS.LOCATION}</h2>
+                            <div className="h-96 w-full">
+                                {disabled ? (
+                                    <Map center={mapCenter}>
+                                        <Marker position={mapCenter} />
+                                    </Map>
+                                ) : (
+                                    <LocationSelector
+                                        center={mapCenter}
+                                        onChange={(lat, lng) => {
+                                            form.setValue('latitude', lat);
+                                            form.setValue('longitude', lng);
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="container p-4 w-1/3"></div>
-            </div>
-        </div>
+            </form>
+        </Form>
     );
 };

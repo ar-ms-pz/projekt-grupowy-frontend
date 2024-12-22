@@ -19,4 +19,5 @@ export const STRINGS = {
 
     LOADING: 'Loading...',
     PER_MONTH: 'per month',
+    OF: 'of',
 };

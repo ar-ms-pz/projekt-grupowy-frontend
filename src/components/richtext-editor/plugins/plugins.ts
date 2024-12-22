@@ -15,6 +15,7 @@ import { softBreakPlugin } from './soft-break';
 import { trailingBlockPlugin } from './trailing-block';
 import { linkPlugin } from './link';
 import { tablePlugin } from './table';
+import { exitBreakPlugin } from './exit-break';
 
 export const viewPlugins = [
     basicElementsPlugin,
@@ -36,4 +37,5 @@ export const editorPlugins = [
     ...blockSelectionPlugins,
     softBreakPlugin,
     trailingBlockPlugin,
+    exitBreakPlugin,
 ];
