@@ -30,6 +30,8 @@ const STRINGS = {
     CONFIRM_PASSWORD: 'Confirm password',
     SUBMIT: 'Sign up',
     ERROR: 'Error',
+    PHONE: 'Phone number',
+    EMAIL: 'Email',
 };
 
 const formSchema = z
@@ -47,6 +49,20 @@ const formSchema = z
             .regex(/^[a-zA-Z0-9_]+$/, {
                 message:
                     'Username can only contain letters, numbers, and underscores.',
+            }),
+        email: z
+            .string({
+                required_error: 'Email is required.',
+            })
+            .email({
+                message: 'Email must be a valid email address.',
+            }),
+        phone: z
+            .string({
+                required_error: 'Phone number is required.',
+            })
+            .regex(/^[+]?[0-9]{0,3}[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, {
+                message: 'Phone number must be a valid phone number.',
             }),
         password: z
             .string({
@@ -92,6 +108,8 @@ export const SignUpPage = () => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: '',
+            email: '',
+            phone: '',
             password: '',
             confirmPassword: '',
         },
@@ -105,12 +123,12 @@ export const SignUpPage = () => {
         }
     }, [navigate, user]);
 
-    const onSubmit = async ({ username, password }: FormModel) => {
+    const onSubmit = async (data: FormModel) => {
         setIsPending(true);
         setError(null);
 
         try {
-            await signUp(username, password);
+            await signUp(data);
         } catch (e) {
             if (e instanceof FetchError)
                 setError(getErrorText(e.errors[0]?.code));
@@ -161,6 +179,38 @@ export const SignUpPage = () => {
                                         <FormControl>
                                             <Input
                                                 placeholder={STRINGS.USERNAME}
+                                                {...field}
+                                                autoComplete="username"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input
+                                                placeholder={STRINGS.EMAIL}
+                                                {...field}
+                                                autoComplete="username"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="phone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input
+                                                placeholder={STRINGS.PHONE}
                                                 {...field}
                                                 autoComplete="username"
                                             />

@@ -21,7 +21,6 @@ import {
     UnderlineIcon,
 } from 'lucide-react';
 
-import { AlignDropdownMenu } from './align-dropdown-menu';
 import { EmojiDropdownMenu } from './emoji-dropdown-menu';
 import { RedoToolbarButton, UndoToolbarButton } from './history-toolbar-button';
 import { IndentListToolbarButton } from './indent-list-toolbar-button';
@@ -104,8 +103,6 @@ export function FixedToolbarButtons() {
                     </ToolbarGroup>
 
                     <ToolbarGroup>
-                        <AlignDropdownMenu />
-
                         <IndentListToolbarButton
                             nodeType={ListStyleType.Disc}
                         />

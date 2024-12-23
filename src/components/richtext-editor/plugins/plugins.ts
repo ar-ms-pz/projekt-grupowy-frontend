@@ -9,13 +9,13 @@ import { cursorOverlayPlugin } from './cursor-overlay';
 import { HorizontalRulePlugin } from '@udecode/plate-horizontal-rule/react';
 import { indentPlugin } from './indent';
 import { indentListPlugin } from './indent-list';
-import { LineHeightPlugin } from '@udecode/plate-line-height/react';
 import { basicElementsPlugin } from './basic-elements';
 import { softBreakPlugin } from './soft-break';
 import { trailingBlockPlugin } from './trailing-block';
 import { linkPlugin } from './link';
 import { tablePlugin } from './table';
 import { exitBreakPlugin } from './exit-break';
+import { lineHeightPlugin } from './line-height';
 
 export const viewPlugins = [
     basicElementsPlugin,
@@ -26,7 +26,7 @@ export const viewPlugins = [
     HorizontalRulePlugin,
     indentPlugin,
     indentListPlugin,
-    LineHeightPlugin,
+    lineHeightPlugin,
     linkPlugin,
     tablePlugin,
 ];

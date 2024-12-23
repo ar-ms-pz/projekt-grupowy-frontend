@@ -57,8 +57,6 @@ export const useAddPost = () => {
             if (status) formData.append('status', status);
             if (title) formData.append('title', title);
             if (type) formData.append('type', type);
-            if (latitude) formData.append('latitude', latitude.toString());
-            if (longitude) formData.append('longitude', longitude.toString());
 
             return callApi(Endpoints.POSTS, {
                 method: 'POST',

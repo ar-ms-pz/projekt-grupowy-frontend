@@ -19,6 +19,7 @@ export const MyPostsConnector = () => {
     const { data } = usePosts({
         variables: {},
         userId: user?.id,
+        status: ['ARCHIVED', 'DRAFT', 'PUBLISHED'],
     });
     const params = useSearch({
         from: '/my-posts',

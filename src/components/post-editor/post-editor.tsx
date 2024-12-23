@@ -172,8 +172,7 @@ export const PostEditor = ({ post, disabled }: Props) => {
                             isEditing={!disabled as any}
                         />
 
-                        {(!disabled ||
-                            parsedDescription?.children?.length > 1) && (
+                        {(!disabled || parsedDescription?.length > 1) && (
                             <div className="border rounded-xl">
                                 <FormField
                                     control={form.control}

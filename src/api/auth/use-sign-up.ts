@@ -5,19 +5,23 @@ import { callApi } from '../helpers/call-api';
 import { User } from '../models/user';
 import { FetchError } from '../helpers/fetch-error';
 
-interface Variables {
+export interface SignUpVariables {
     username: string;
     password: string;
+    email: string;
+    phone: string;
 }
 
 export const useSignUp = () => {
-    return useMutation<Response<User>, FetchError, Variables>({
-        mutationFn: async ({ username, password }) => {
+    return useMutation<Response<User>, FetchError, SignUpVariables>({
+        mutationFn: async ({ username, password, email, phone }) => {
             return callApi(Endpoints.REGISTER, {
                 method: 'POST',
                 body: {
                     username,
                     password,
+                    email,
+                    phone,
                 },
             });
         },

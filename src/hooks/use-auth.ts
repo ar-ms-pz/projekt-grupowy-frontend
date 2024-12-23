@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { TOKEN_REFRESH_THRESHOLD } from '../config';
 import { useSignIn } from '../api/auth/use-sign-in';
-import { useSignUp } from '../api/auth/use-sign-up';
+import { SignUpVariables, useSignUp } from '../api/auth/use-sign-up';
 import { useExtendSession } from '../api/auth/use-extend-session';
 import { useLogout } from '../api/auth/use-logout';
 import { useQueryClient } from '@tanstack/react-query';
@@ -10,7 +10,7 @@ import { useNavigate } from '@tanstack/react-router';
 
 interface ReturnValues {
     signIn: (username: string, password: string) => Promise<void>;
-    signUp: (username: string, password: string) => Promise<void>;
+    signUp: (data: SignUpVariables) => Promise<void>;
     signOut: () => Promise<void>;
     isPending: boolean;
     isAuthenticated: boolean;
@@ -47,8 +47,8 @@ export const useAuth = (): ReturnValues => {
     );
 
     const signUp = useCallback(
-        async (username: string, password: string) => {
-            await signUpMutateAsync({ username, password });
+        async (data: SignUpVariables) => {
+            await signUpMutateAsync(data);
 
             const tokenExpiration = new Date();
 
