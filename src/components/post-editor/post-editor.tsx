@@ -24,6 +24,8 @@ import { Map } from '../map/map';
 import { Marker } from 'react-leaflet';
 import { LocationSelector } from '../location-selector/location-selector';
 import { useEditorRef } from '@udecode/plate-common/react';
+import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons';
 
 interface ViewProps {
     post: Post;
@@ -42,6 +44,8 @@ const STRINGS = {
     PHONE: 'Phone number',
     SELLER: 'Seller',
     LOCATION: 'Location',
+    ARCHIVED_TITLE: 'This offer is archived',
+    ARCHIVED_DESCRIPTION: 'It is no longer available.',
 };
 
 export const PostEditor = ({ post, disabled }: Props) => {
@@ -132,6 +136,18 @@ export const PostEditor = ({ post, disabled }: Props) => {
                             editor.tf.setValue(parsedDescription);
                     }}
                 />
+
+                {post?.status === 'ARCHIVED' && disabled && (
+                    <div className="px-4 pt-4 w-full">
+                        <Alert>
+                            <ExclamationTriangleIcon />
+                            <AlertTitle> {STRINGS.ARCHIVED_TITLE}</AlertTitle>
+                            <AlertDescription>
+                                {STRINGS.ARCHIVED_DESCRIPTION}
+                            </AlertDescription>
+                        </Alert>
+                    </div>
+                )}
 
                 <div className="container flex justify-center flex-col xl:gap-4 xl:flex-row">
                     <div className="p-4 xl:w-2/3 gap-4 flex flex-col">
